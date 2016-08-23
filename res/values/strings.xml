@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Obiective CVA</string>
+
+    <!-- Activity titles -->
+    <string name="title_activity_reports">Reports</string>
+    <string name="title_activity_nomenclatures">Nomenclatoare</string>
+    <string name="title_activity_cluster">ClusterActivity</string>
+    <string name="title_activity_map_utility">MapUtilityActivity</string>
+    <string name="title_activity_home">Home</string>
+    <string name="title_activity_consultant_home">ConsultantHome</string>
+    <string name="title_activity_director_home">Meniu principal</string>
+    <string name="title_activity_map">Map</string>
+    <string name="title_activity_add_edit_objective">AddEditObjective</string>
+    <string name="title_activity_map_popup">MapPopup</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Authenticator -->
+    <string name="authenticator_hint_username">Nume Utilizator</string>
+    <string name="authenticator_hint_password">Parola</string>
+    <string name="authenticator_text_radio_consultant">Consilier de vânzări</string>
+    <string name="authenticator_text_radio_director">Director de vânzări</string>
+    <string name="authenticator_text_button_login">Autentificare</string>
+    <string name="home_text_debug">Acest caz nu este prevăzut</string>
+
+    <!-- Objectives -->
+    <string name="table_header_name">Denumire</string>
+    <string name="table_header_phase">Fază</string>
+    <string name="table_header_beneficiary">Beneficiar</string>
+    <string name="table_header_address">Adresa</string>
+    <string name="table_header_constr_type">Constructor</string>
+    <string name="table_header_constr_city">Localitate</string>
+    <string name="table_header_constr_region">Judet</string>
+    <string name="table_header_phaseExpiration">Schimbare fază</string>
+    <string name="table_header_authorizationExpiration">Expirare autorizatie</string>
+
+    <!-- Drawer Text -->
+    <string name="drawer_open">Drawer is Open</string>
+    <string name="drawer_closed">Drawer Closed</string>
+    <string name="drawer_menu_nomenclatoare">Nomenclatoare</string>
+    <string name="drawer_menu_obiective">Obiective</string>
+    <string name="drawer_text_user_placeholder">Mock User</string>
+    <string name="drawer_text_usertype_placeholder">Mock UserType</string>
+
+    <!-- GPS Tracker -->
+    <string name="gps_dialog_title">Setarile GPS</string>
+    <string name="gps_message_content">GPS nu este pornit. Doriti sa intrati in meniul Setari?</string>
+
+    <!-- Dialog Box Message -->
+    <string name="new_objective_msg">Doriti sa creati un obiectiv nou?</string>
+    <string name="lbl_stage">Etapa:</string>
+    <string name="lbl_phase">Faza:</string>
+    <string name="lbl_phase_expiration">Data:</string>
+    <string name="lbl_duration_phase">Durata faza:</string>
+    <string name="lbl_phase_start_date">Data inceput faza</string>
+    <string name="lbl_phase_end_date">Data sfarsit faza</string>
+    <string name="btn_no">Nu</string>
+    <string name="btn_yes">Da</string>
+    <string name="btn_save">Salvează</string>
+    <string name="btn_cancel">Renunță</string>
+    <string name="no_data_found">Nu s-a găsit nici un rezultat.</string>
+
+    <string-array name="status_values">
+        <item>Inactivă</item>
+        <item>Activă</item>
+    </string-array>
+
+    <string name="txtInfoWindow">Pentru modificarea datei apasati aici!</string>
+    <string name="dialog_infowindow_title">Editare fază</string>
+    <!-- Map Menu -->
+    <string name="action_search">Cautare</string>
+    <string name="action_my_objectives">Obiectivele mele</string>
+    <string name="action_current_position">Locația curentă</string>
+    <string name="action_help">Ajutor</string>
+    <string name="action_check_updates">Update</string>
+    <string name="action_button_title_filters">Filtre</string>
+    <string name="action_button_title_mapMode">Mod harta</string>
+    <string name="action_button_title_mapToggle">Schimba harta</string>
+    <string name="action_button_title_mapModHybrid">Hibrid</string>
+    <string name="action_button_title_mapModNormal">Normal</string>
+    <string name="action_button_title_mapModTerrain">Terestru</string>
+
+    <!-- Add Edit Menu -->
+    <string name="action_button_title_save">Salvează</string>
+    <string name="action_button_title_archive">Arhivează</string>
+    <string name="action_button_title_saveModifications">Salvează modificări</string>
+
+    <!-- Objectives activity -->
+    <string name="objective_title_archive">Arhivă</string>
+    <string name="objective_title_active">Obiective</string>
+
+    <!-- Add Edit Objectives activity -->
+    <string name="add_edit_button_save">Salvează</string>
+    <string name="add_edit_button_archive">Arhivează</string>
+    <string name="add_edit_title_add">Adăugare obiectiv</string>
+    <string name="add_edit_title_edit">Editare obiectiv</string>
+    <string name="add_edit_title_view">Informații Obiectiv</string>
+    <string name="add_edit_title_archive">DETALII OBIECTIV</string>
+    <string name="add_edit_hint_zip">Cod poștal nespecificat</string>
+    <string name="add_edit_hint_value">RON</string>
+    <string name="add_edit_button_text_save">Salvează modificări</string>
+
+    <!-- Objective fields -->
+    <string name="objective_details_label_add_date">Data adăugării</string>
+    <string name="objective_details_hint_pickDate">Alegeti o data</string>
+    <string name="objective_details_label_objective_name">Nume Obiectiv</string>
+    <string name="objective_details_label_objective_city">Localitate</string>
+    <string name="objective_details_label_objective_filiala">Filiala</string>
+    <string name="objective_details_label_objective_consilier">Agent</string>
+    <string name="objective_details_label_objective_value">Valoare estimată</string>
+    <string name="objective_details_label_objective_exec_name">Nume executant</string>
+    <string name="objective_details_label_objective_type">Tipul obiectivului</string>
+    <string name="objective_details_radio_new_construction">Construcție nouă</string>
+    <string name="objective_details_radio_renovation">Renovare</string>
+    <string name="objective_details_label_beneficiary">Beneficiar</string>
+    <string name="objective_details_label_beneficiary_type">Tipul beneficiarului</string>
+    <string name="objective_details_radio_individual">Persoană fizică</string>
+    <string name="objective_details_radio_legal">Persoană juridică</string>
+    <string name="objective_details_label_cui">CUI:</string>
+    <string name="objective_details_label_cui_exec">CUI Executant:</string>
+    <string name="objective_details_hint_cui">[ |ZZZZZZZZZ| ] |C|</string>
+    <string name="objective_details_label_nr_rc">NR RC:</string>
+    <string name="objective_details_label_nr_rc_exec">NR RC Executant:</string>
+    <string name="objective_details_hint_nr_rc">J12/34567…/dd.mm.yyyy</string>
+    <string name="objective_details_label_authorization_start">Data autorizație</string>
+    <string name="objective_details_label_authorization_end">Data sfarsit autorizație</string>
+    <string name="objective_details_label_address">Adresa</string>
+    <string name="objective_details_label_coordinates">Coordonate</string>
+    <string name="objective_details_hint_coordinates">Completați folosind harta</string>
+    <string name="objective_details_label_zip">Cod postal</string>
+    <string name="objective_details_label_region">Judet</string>
+    <string name="objective_details_label_status">Stare</string>
+    <string name="objective_details_label_executant">Executant</string>
+    <string name="objective_details_label_category">Categorie</string>
+    <string name="objective_details_label_stage">Etapa obiectiv</string>
+    <string name="objective_details_label_phase">Faza obiectiv</string>
+    <string name="objective_details_label_phase_start">Data început fază</string>
+    <string name="objective_details_label_phase_end">Data sfârșit fază</string>
+    <string name="objective_details_label_phase_duration">Durată fază</string>
+    <string name="objective_details_hint_phase_duration">Zile</string>
+
+    <!-- Director Home -->
+    <string name="director_home_text_map_mode">MOD HARTĂ</string>
+    <string name="director_home_text_list_mode">MOD LISTĂ</string>
+
+    <!-- Info Window -->
+    <string name="info_window_label_stage_phase">Etapa / Faza</string>
+
+    <!-- Filters -->
+    <string name="filters_title">FILTRE</string>
+    <string name="filters_button_apply_filters">Aplică filtre</string>
+    <string name="filters_button_clear_filters">Elimină filtre</string>
+    <string name="filters_label_add_interval">Interval adăugare:</string>
+    <string name="filters_interval_separator_dates">/</string>
+    <string name="filters_label_region">Județ:</string>
+    <string name="filters_label_status">Stare</string>
+    <string name="filters_interval_authorization_start">Data autorizatie:</string>
+    <string name="filters_interval_authorization_end">Expirare autorizatie:</string>
+    <string name="filters_value_hint_minimum">Valoare minimă</string>
+    <string name="filters_value_hint_maximum">Valoare maximă</string>
+    <string name="filters_interval_separator_numbers"><![CDATA[<]]></string>
+    <string name="filters_interval_separator_dash">-</string>
+    <string name="filters_label_cva_code">Cod CVA:</string>
+
+    <!-- Nomenclatures -->
+    <string name="nomenclatures_button_add_stage">Adaugă o etapă</string>
+    <string name="nomenclatures_button_add_phase">Adaugă o fază</string>
+    <string name="nomenclatures_title_add_phase">Fază nouă</string>
+    <string name="nomenclatures_title_add_stage">Etapă nouă</string>
+    <string name="nomenclatures_label_name">Nume</string>
+    <string name="nomenclatures_label_phase_parent">Etapa părinte</string>
+    <string name="nomenclatures_label_duration">Durata în zile</string>
+    <string name="nomenclatures_hint_duration">Zile</string>
+    <string name="nomenclatures_label_hierarchy">Ierarhie</string>
+    <string name="nomenclatures_label_status">Status</string>
+
+    <!-- Errors -->
+    <string name="error_field_empty">Câmp necompletat</string>
+    <string name="error_incorrect_completion">Câmp completat incorect</string>
+    <string name="error_beneficiary_not_added">Beneficiarul nu a fost adăugat, verificați erorile</string>
+    <string name="error_objective_definitions">Corectați problemele de definire a obiectivului</string>
+
+    <!-- Beneficiary add dialog -->
+    <string name="beneficiary_add_title">Adăugare Beneficiar</string>
+    <string name="beneficiary_add_message">Beneficiarul descris nu există. Doriți sa il adăugați in baza de date?</string>
+    <string name="beneficiary_add_button_positive">Adaugați</string>
+    <string name="beneficiary_add_button_negative">Alt beneficiar</string>
+
+    <!-- Objective add dialog -->
+    <string name="objective_add_title">Setare coordonate</string>
+    <string name="objective_add_message">Setați aceste coordonate pentru noul obiectiv?</string>
+    <string name="objective_edit_message">Sigur modificați coordonatele?</string>
+    <string name="objective_add_positive">Setați</string>
+    <string name="objective_add_negative">Anulare</string>
+
+    <!-- Warning dialog -->
+    <string name="stage_phase_warning_title">Atenție!</string>
+    <string name="stage_warning_text">"Ați sărit peste o etapă!"</string>
+    <string name="phase_warning_text">"Ați sărit peste o fază!"</string>
+    <string name="stage_phase_warning_button_positive">OK</string>
+    <string name="nomenclatures_delete_title">Confirmare</string>
+    <string name="nomenclatures_delete_message">Sunteți sigur(ă) că doriți să ștergeți etapa </string>
+    <string name="nomenclatures_delete_positive">Da</string>
+    <string name="nomenclatures_delete_negative">Nu</string>
+    <string name="toast_loggedOut">Ați fost deconectat</string>
+    <string name="toast_warn_logOut">Apăsați din nou pentru deconectare</string>
+    <string name="toast_loggedOut_notifs">Ați fost deconectat. Notificările sunt oprite.</string>
+    <string name="authenticator_logIn_message">Autentificat ca: </string>
+
+    <!-- Alin -->
+    <string name="objective_details_label_objective_meser_name">Nume meserias</string>
+    <string name="objective_details_label_surname_meser">Prenume meserias</string>
+    <string name="objective_details_label_nr_tel_meser">Telefon meserias</string>
+
+</resources>

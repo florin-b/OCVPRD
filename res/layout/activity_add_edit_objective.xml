@@ -1,0 +1,1095 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include layout="@layout/app_bar" />
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal"
+            android:padding="16dp" >
+
+            <android.support.v7.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                app:cardCornerRadius="15dp" >
+
+                <ScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:fadeScrollbars="true"
+                    android:fadingEdgeLength="16dp"
+                    android:orientation="vertical"
+                    android:requiresFadingEdge="vertical" >
+
+                    <android.support.v7.widget.GridLayout
+                        android:id="@+id/grid_objectiveDetails"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:animateLayoutChanges="true"
+                        app:alignmentMode="alignBounds"
+                        app:columnCount="2"
+                        app:rowOrderPreserved="false" >
+
+                        <LinearLayout
+                            android:id="@+id/layout_addDate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="0"
+                            app:layout_columnWeight="1"
+                            android:background="@drawable/background_selector"
+                            android:clickable="true"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_addDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_add_date"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <TextView
+                                android:id="@+id/textView_objective_addDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:textAppearanceMedium" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_type"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_objective_type"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <RadioGroup
+                                android:id="@+id/radioGroup_objectiveType"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:orientation="horizontal" >
+
+                                <RadioButton
+                                    android:id="@+id/radio_newConstruction"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:nextFocusDown="@+id/acText_objective_beneficiary"
+                                    android:text="@string/objective_details_radio_new_construction"
+                                    android:textAppearance="?android:textAppearanceMedium" />
+
+                                <RadioButton
+                                    android:id="@+id/radio_renovation"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="32dp"
+                                    android:layout_marginStart="32dp"
+                                    android:nextFocusDown="@+id/acText_objective_beneficiary"
+                                    android:text="@string/objective_details_radio_renovation"
+                                    android:textAppearance="?android:textAppearanceMedium" />
+                            </RadioGroup>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="0"
+                            app:layout_columnSpan="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_status"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_status"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <Spinner
+                                android:id="@+id/spinner_objective_status"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="1"
+                            app:layout_columnSpan="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_category"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_category"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <Spinner
+                                android:id="@+id/spinner_objective_category"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="0"
+                            app:layout_columnSpan="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_executant"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_executant"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <Spinner
+                                android:id="@+id/spinner_objective_executant"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_executantDetailsName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp"
+                            android:visibility="gone" >
+
+                            <TextView
+                                android:id="@+id/label_objective_exec_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_objective_exec_name"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <EditText
+                                android:id="@+id/editText_objective_execName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textCapSentences"
+                                android:maxLength="40"
+                                android:nextFocusDown="@+id/acText_objective_beneficiary"
+                                android:nextFocusLeft="@+id/label_objective_name"
+                                android:nextFocusRight="@+id/acText_objective_beneficiary" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_ExecutantDetailsCui"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_column="0"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp"
+                            android:visibility="gone" >
+
+                            <TextView
+                                android:id="@+id/label_objective_executantCUI"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_cui_exec"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <EditText
+                                android:id="@+id/editText_objective_executantCUI"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/objective_details_hint_cui"
+                                android:imeOptions="actionNext"
+                                android:nextFocusDown="@+id/editText_objective_benefNrRc"
+                                android:nextFocusLeft="@+id/acText_objective_beneficiary"
+                                android:nextFocusRight="@+id/editText_objective_benefNrRc"
+                                android:singleLine="true" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_executantDetailsNrRc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_column="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp"
+                            android:visibility="gone" >
+
+                            <TextView
+                                android:id="@+id/label_objective_executantNrRc"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:singleLine="true"
+                                android:text="@string/objective_details_label_nr_rc_exec"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <EditText
+                                android:id="@+id/editText_objective_executantNrRc"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/objective_details_hint_nr_rc"
+                                android:imeOptions="actionNext"
+                                android:nextFocusDown="@+id/editText_objective_address"
+                                android:nextFocusLeft="@+id/editText_objective_benefCUI"
+                                android:nextFocusRight="@+id/editText_objective_address"
+                                android:singleLine="true" />
+                        </LinearLayout>
+<!-- Start -->
+                        
+                        <LinearLayout
+                            android:id="@+id/layout_meseriasName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp"
+                            android:visibility="visible" >
+
+                            <TextView
+                                android:id="@+id/label_objective_meser_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_objective_meser_name"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <EditText
+                                android:id="@+id/editText_objective_meserName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textCapSentences"
+                                android:maxLength="40"
+                                android:nextFocusDown="@+id/acText_objective_beneficiary"
+                                android:nextFocusLeft="@+id/label_objective_name"
+                                android:nextFocusRight="@+id/acText_objective_beneficiary" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_meseriasSurName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_column="0"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp"
+                            android:visibility="visible" >
+
+                            <TextView
+                                android:id="@+id/label_objective_meseriasSurname"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_surname_meser"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <EditText
+                                android:id="@+id/editText_objective_meserSurname"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionNext"
+                                android:nextFocusDown="@+id/editText_objective_benefNrRc"
+                                android:nextFocusLeft="@+id/acText_objective_beneficiary"
+                                android:nextFocusRight="@+id/editText_objective_benefNrRc"
+                                android:singleLine="true" />
+                        </LinearLayout>
+                        
+                        <LinearLayout
+                            android:id="@+id/layout_meseriasNumarTel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_column="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp"
+                            android:visibility="visible" >
+
+                            <TextView
+                                android:id="@+id/label_objective_meseriasTel"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:singleLine="true"
+                                android:text="@string/objective_details_label_nr_tel_meser"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <EditText
+                                android:id="@+id/editText_objective_meserTel"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="numberDecimal"
+                                android:imeOptions="actionNext"
+                                android:nextFocusDown="@+id/editText_objective_address"
+                                android:nextFocusLeft="@+id/editText_objective_benefCUI"
+                                android:nextFocusRight="@+id/editText_objective_address"
+                                android:singleLine="true" />
+                        </LinearLayout>
+                                                
+
+<!-- Stop -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="0"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_objective_name"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <EditText
+                                android:id="@+id/editText_objective_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textCapSentences"
+                                android:maxLength="40"
+                                android:nextFocusDown="@+id/editText_objective_estValue"
+                                android:nextFocusLeft="@null"
+                                android:nextFocusRight="@+id/editText_objective_estValue" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_estValue"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_objective_value"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <EditText
+                                android:id="@+id/editText_objective_estValue"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/add_edit_hint_value"
+                                android:inputType="numberDecimal"
+                                android:nextFocusDown="@+id/acText_objective_beneficiary"
+                                android:nextFocusLeft="@+id/label_objective_name"
+                                android:nextFocusRight="@+id/acText_objective_beneficiary" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="0"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_beneficiaryType"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_beneficiary_type"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <RadioGroup
+                                android:id="@+id/radioGroup_beneficiaryType"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:gravity="center"
+                                android:orientation="horizontal" >
+
+                                <RadioButton
+                                    android:id="@+id/radio_fizic"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:nextFocusDown="@+id/editText_objective_address"
+                                    android:text="@string/objective_details_radio_individual"
+                                    android:textAppearance="?android:textAppearanceMedium" />
+
+                                <RadioButton
+                                    android:id="@+id/radio_juridic"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:nextFocusDown="@+id/editText_objective_benefCUI"
+                                    android:text="@string/objective_details_radio_legal"
+                                    android:textAppearance="?android:textAppearanceMedium" />
+                            </RadioGroup>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_beneficiary"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_beneficiary"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <AutoCompleteTextView
+                                android:id="@+id/acText_objective_beneficiary"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:completionThreshold="3"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords"
+                                android:maxLength="30"
+                                android:nextFocusDown="@+id/editText_objective_address"
+                                android:nextFocusLeft="@+id/editText_objective_estValue"
+                                android:nextFocusRight="@+id/editText_objective_address"
+                                android:singleLine="true" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_juridicaDetailsCui"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_column="0"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp"
+                            android:visibility="gone" >
+
+                            <TextView
+                                android:id="@+id/label_objective_benefCUI"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_cui"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <EditText
+                                android:id="@+id/editText_objective_benefCUI"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/objective_details_hint_cui"
+                                android:imeOptions="actionNext"
+                                android:nextFocusDown="@+id/editText_objective_benefNrRc"
+                                android:nextFocusLeft="@+id/acText_objective_beneficiary"
+                                android:nextFocusRight="@+id/editText_objective_benefNrRc"
+                                android:singleLine="true" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_juridicaDetailsNrRc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_column="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp"
+                            android:visibility="gone" >
+
+                            <TextView
+                                android:id="@+id/label_objective_benefNrRc"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:singleLine="true"
+                                android:text="@string/objective_details_label_nr_rc"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <EditText
+                                android:id="@+id/editText_objective_benefNrRc"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/objective_details_hint_nr_rc"
+                                android:imeOptions="actionNext"
+                                android:nextFocusDown="@+id/editText_objective_address"
+                                android:nextFocusLeft="@+id/editText_objective_benefCUI"
+                                android:nextFocusRight="@+id/editText_objective_address"
+                                android:singleLine="true" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="0"
+                            app:layout_columnSpan="2"
+                            app:layout_columnWeight="1"
+                            android:orientation="horizontal"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_authInterval"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                android:text="Interval autorizație:"
+                                android:textAppearance="?android:textAppearanceLarge"
+                                android:textColor="@color/primaryColor" />
+
+                            <TextView
+                                android:id="@+id/textView_objective_authStartDate"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:layout_weight="1"
+                                android:background="@drawable/background_selector"
+                                android:gravity="center"
+                                android:hint="Dată început"
+                                android:textAppearance="?android:textAppearanceMedium" />
+
+                            <TextView
+                                android:id="@+id/textView_objective_authEndDate_separator"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:background="@drawable/background_selector"
+                                android:gravity="center"
+                                android:hint=" - "
+                                android:textAppearance="?android:textAppearanceMedium" />
+
+                            <TextView
+                                android:id="@+id/textView_objective_authEndDate"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:layout_weight="1"
+                                android:background="@drawable/background_selector"
+                                android:gravity="center"
+                                android:hint="Dată sfârșit"
+                                android:textAppearance="?android:textAppearanceMedium" />
+
+                            <!-- </LinearLayout> -->
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            app:layout_column="0"
+                            app:layout_columnSpan="2"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Adresă"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                                android:textColor="@android:color/darker_gray" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal" >
+
+                                <Button
+                                    android:id="@+id/button_getCurrentGpsLocation"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Preia locația curentă" />
+
+                                <ProgressBar
+                                    android:id="@+id/progressBar_currentLocation"
+                                    style="?android:attr/progressBarStyle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:visibility="gone" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="0"
+                            app:layout_columnSpan="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_zip"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_region"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <Spinner
+                                android:id="@+id/spinner_objective_region"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="1"
+                            app:layout_columnSpan="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_address_city"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Localitate"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <EditText
+                                android:id="@+id/editText_objective_address_city"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textCapSentences"
+                                android:nextFocusDown="@+id/editText_objective_address_street"
+                                android:nextFocusLeft="@+id/acText_objective_beneficiary"
+                                android:nextFocusRight="@+id/editText_objective_address_street"
+                                android:textAppearance="?android:textAppearanceMedium" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="0"
+                            app:layout_columnSpan="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_address_street"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Stradă"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <EditText
+                                android:id="@+id/editText_objective_address_street"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textCapSentences"
+                                android:nextFocusDown="@+id/editText_objective_address_number"
+                                android:nextFocusLeft="@+id/editText_objective_address_city"
+                                android:nextFocusRight="@+id/editText_objective_address_number"
+                                android:textAppearance="?android:textAppearanceMedium" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="1"
+                            app:layout_columnSpan="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_address_number"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Număr"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <EditText
+                                android:id="@+id/editText_objective_address_number"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textCapSentences"
+                                android:nextFocusDown="@+id/editText_objective_zip"
+                                android:nextFocusLeft="@+id/editText_objective_address_street"
+                                android:nextFocusRight="@+id/editText_objective_zip"
+                                android:textAppearance="?android:textAppearanceMedium" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="0"
+                            app:layout_columnSpan="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_address_phone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Telefon"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <EditText
+                                android:id="@+id/editText_objective_address_phone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="numberDecimal"
+                                android:textAppearance="?android:textAppearanceMedium" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            app:layout_column="0"
+                            app:layout_columnSpan="2"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp"
+                            android:visibility="gone"
+                             >
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Coordonate"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                                android:textColor="@android:color/darker_gray" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="0"
+                            app:layout_columnSpan="2"
+                            app:layout_columnWeight="1"
+                            android:orientation="horizontal"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.75"
+                                android:orientation="vertical"
+                                android:paddingEnd="4dp"
+                                android:paddingRight="4dp"
+                                android:visibility="gone"
+                                 >
+
+                                <TextView
+                                    android:id="@+id/label_objective_coordinates_lat"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Latitudine"
+                                    android:textAppearance="?android:textAppearanceMedium"
+                                    android:textColor="@color/primaryColor" />
+
+                                <EditText
+                                    android:id="@+id/editText_objective_coordinates_lat"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/objective_details_hint_coordinates"
+                                    android:inputType="numberDecimal"
+                                    android:nextFocusDown="@+id/editText_objective_coordinates_lon"
+                                    android:nextFocusLeft="@+id/editText_objective_zip"
+                                    android:nextFocusRight="@+id/editText_objective_coordinates_lon"
+                                    android:textAppearance="?android:textAppearanceMedium" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.75"
+                                android:orientation="vertical"
+                                android:paddingEnd="4dp"
+                                android:paddingRight="4dp"
+                                android:visibility="gone"
+                                 >
+
+                                <TextView
+                                    android:id="@+id/label_objective_coordinates_lon"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Longitudine"
+                                    android:textAppearance="?android:textAppearanceMedium"
+                                    android:textColor="@color/primaryColor" />
+
+                                <EditText
+                                    android:id="@+id/editText_objective_coordinates_lon"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/objective_details_hint_coordinates"
+                                    android:imeOptions="actionDone"
+                                    android:inputType="numberDecimal"
+                                    android:nextFocusDown="@null"
+                                    android:nextFocusLeft="@+id/editText_objective_coordinates_lat"
+                                    android:nextFocusRight="@null"
+                                    android:textAppearance="?android:textAppearanceMedium" />
+                            </LinearLayout>
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal"
+                                android:padding="4dp"
+                                android:visibility="gone"
+                                 >
+
+                                <Button
+                                    android:id="@+id/button_computeCoordinates"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_centerVertical="true"
+                                    android:text="Calculează coordonate" />
+
+                                <ProgressBar
+                                    android:id="@+id/progressBar_computeCoordinates"
+                                    style="?android:attr/progressBarStyle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:layout_toEndOf="@+id/button_computeCoordinates"
+                                    android:layout_toRightOf="@+id/button_computeCoordinates"
+                                     />
+                            </RelativeLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="0"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_stage"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_stage"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <Spinner
+                                android:id="@+id/spinner_stage"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:textAppearanceMedium" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="1"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_phase"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_phase"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <Spinner
+                                android:id="@+id/spinner_phase"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:textAppearanceMedium" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_phaseStartDate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="0"
+                            app:layout_columnWeight="1"
+                            android:background="@drawable/background_selector"
+                            android:clickable="true"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_phaseStartDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_phase_start"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <TextView
+                                android:id="@+id/textView_objective_phaseStartDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/objective_details_hint_pickDate"
+                                android:textAppearance="?android:textAppearanceMedium" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layout_phaseEndDate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="1"
+                            app:layout_columnWeight="1"
+                            android:background="@drawable/background_selector"
+                            android:clickable="true"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_phaseEndDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_phase_end"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <TextView
+                                android:id="@+id/textView_objective_phaseEndDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/objective_details_hint_pickDate"
+                                android:textAppearance="?android:textAppearanceMedium" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            app:layout_column="0"
+                            app:layout_columnWeight="1"
+                            android:orientation="vertical"
+                            android:paddingLeft="8dp"
+                            android:paddingStart="8dp" >
+
+                            <TextView
+                                android:id="@+id/label_objective_phaseDuration"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/objective_details_label_phase_duration"
+                                android:textAppearance="?android:textAppearanceMedium"
+                                android:textColor="@color/primaryColor" />
+
+                            <EditText
+                                android:id="@+id/editText_objective_phaseDuration"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/lbl_duration_phase"
+                                android:inputType="number"
+                                android:textAppearance="?android:textAppearanceMedium" />
+                        </LinearLayout>
+                    </android.support.v7.widget.GridLayout>
+                </ScrollView>
+            </android.support.v7.widget.CardView>
+
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="4dp"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
+
+</LinearLayout>

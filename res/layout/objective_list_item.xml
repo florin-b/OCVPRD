@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    app:cardCornerRadius="10dp" >
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_selector"
+        android:orientation="horizontal"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp"
+        android:weightSum="4" >
+
+        <TextView
+            android:id="@+id/textView_objective_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:gravity="start"
+            android:padding="4dp"
+            android:textAppearance="?android:textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textView_objective_beneficiary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:gravity="start"
+            android:padding="4dp"
+            android:textAppearance="?android:textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textView_objective_constructor_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:gravity="start"
+            android:padding="4dp"
+            android:textAppearance="?android:textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textView_objective_city"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:gravity="start"
+            android:padding="4dp"
+            android:textAppearance="?android:textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textView_objective_region"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:gravity="start"
+            android:padding="4dp"
+            android:textAppearance="?android:textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textView_objective_phase"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:gravity="start"
+            android:padding="4dp"
+            android:textAppearance="?android:textAppearanceMedium" />
+
+        <!-- Create Expired Warning, Author: Alin -->    
+        <ImageView 
+               android:id="@+id/expired_warning"
+               android:src="@drawable/expired"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:visibility="invisible" />
+        <!-- End Expired Warning -->
+        
+        <TextView
+            android:id="@+id/textView_objective_phaseExp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:gravity="start"
+            android:padding="4dp"
+            android:textAppearance="?android:textAppearanceMedium" />
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/drawer_menu_nomenclatoare"
+            android:icon="@android:drawable/ic_menu_compass"
+            android:title="@string/drawer_menu_nomenclatoare"/>
+
+        <item
+            android:id="@+id/drawer_menu_obiective"
+            android:icon="@android:drawable/ic_menu_compass"
+            android:title="@string/drawer_menu_obiective"/>
+
+        <!--item
+            android:id="@+id/drawer_menu_rapoarte"
+            android:icon="@android:drawable/ic_menu_compass"
+            android:title="Rapoarte"/-->
+    </group>
+</menu>

@@ -1,0 +1,825 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_filters"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:orientation="vertical"
+    android:padding="16dp" >
+
+    <ImageButton
+        android:id="@+id/button_hideFilters"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="end"
+        android:background="@drawable/background_selector"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_clear_black_48dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/filters_title"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/button_applyFilters"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/filters_button_apply_filters"
+            android:textColor="@android:color/black" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/darker_gray" />
+
+        <Button
+            android:id="@+id/button_clearFilters"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_weight="1"
+            android:text="@string/filters_button_clear_filters"
+            android:textColor="@android:color/black" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:fadeScrollbars="true"
+        android:fadingEdgeLength="16dp"
+        android:orientation="vertical"
+        android:requiresFadingEdge="vertical" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/layout_filter_filiala"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:padding="8dp" >
+
+                <TextView
+                    android:id="@+id/label_filter_filiala"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/objective_details_label_objective_filiala"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <Spinner
+                    android:id="@+id/spinner_objective_filiala"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0" />
+
+                <ImageButton
+                    android:id="@+id/button_clearFiliala"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_filter_consilier"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:padding="8dp" >
+
+                <TextView
+                    android:id="@+id/label_filter_consilier"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/objective_details_label_objective_consilier"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <Spinner
+                    android:id="@+id/spinner_objective_consilier"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0" />
+
+                <ImageButton
+                    android:id="@+id/button_clearConsilier"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_filter_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:padding="8dp" >
+
+                <TextView
+                    android:id="@+id/label_filter_name"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/objective_details_label_objective_name"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/autoComplete_filter_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:completionThreshold="3"
+                    android:ems="15"
+                    android:nextFocusDown="@+id/acText_filter_beneficiary"
+                    android:nextFocusForward="@+id/acText_filter_beneficiary"
+                    android:nextFocusLeft="@null"
+                    android:nextFocusRight="@+id/acText_filter_beneficiary"
+                    android:singleLine="true" />
+
+                <ImageButton
+                    android:id="@+id/button_clearName"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_filter_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:padding="8dp" >
+
+                <TextView
+                    android:id="@+id/label_filter_city"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/objective_details_label_objective_city"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <EditText
+                    android:id="@+id/editText_filter_city"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:completionThreshold="3"
+                    android:ems="15"
+                    android:nextFocusLeft="@null"
+                    android:singleLine="true" />
+
+                <ImageButton
+                    android:id="@+id/button_clearCity"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_filter_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:padding="8dp" >
+
+                <TextView
+                    android:id="@+id/label_filter_status"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/filters_label_status"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <Spinner
+                    android:id="@+id/spinner_filter_status"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="15" />
+
+                <ImageButton
+                    android:id="@+id/button_clearStatus"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_filter_dateAdded"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:padding="8dp" >
+
+                <TextView
+                    android:id="@+id/label_filter_addDate"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/filters_label_add_interval"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" >
+
+                    <TextView
+                        android:id="@+id/filter_dateAdded_start"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/background_selector"
+                        android:clickable="true"
+                        android:gravity="center"
+                        android:hint="@string/objective_details_hint_pickDate"
+                        android:padding="4dp"
+                        android:textAppearance="?android:textAppearanceLarge" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="4dp"
+                        android:text="@string/filters_interval_separator_dates"
+                        android:textAppearance="?android:textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/filter_dateAdded_end"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/background_selector"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:hint="@string/objective_details_hint_pickDate"
+                        android:padding="4dp"
+                        android:textAppearance="?android:textAppearanceLarge" />
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/button_clearAddDates"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_filter_region"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/label_filter_region"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/filters_label_region"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <Spinner
+                    android:id="@+id/spinner_filter_region"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="15" />
+
+                <ImageButton
+                    android:id="@+id/button_clearRegions"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_filter_beneficiary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:padding="8dp" >
+
+                <TextView
+                    android:id="@+id/label_filter_beneficiary"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/objective_details_label_beneficiary"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/autoComplete_filter_beneficiary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:completionThreshold="3"
+                    android:ems="15"
+                    android:nextFocusDown="@+id/filter_estValue_start"
+                    android:nextFocusLeft="@+id/autoComplete_filter_name"
+                    android:nextFocusRight="@+id/filter_estValue_start"
+                    android:singleLine="true" />
+
+                <ImageButton
+                    android:id="@+id/button_clearBeneficiary"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_filter_beneficiaryType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:padding="8dp" >
+
+                <TextView
+                    android:id="@+id/label_filter_beneficiaryType"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/objective_details_label_beneficiary_type"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <RadioGroup
+                    android:id="@+id/radioGroup_filter_beneficiaryType"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal" >
+
+                    <RadioButton
+                        android:id="@+id/radio_filter_fizic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/objective_details_radio_individual" />
+
+                    <RadioButton
+                        android:id="@+id/radio_filter_juridic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginStart="16dp"
+                        android:text="@string/objective_details_radio_legal" />
+                </RadioGroup>
+
+                <ImageButton
+                    android:id="@+id/button_clearBeneficiaryType"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_juridicaDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:orientation="horizontal"
+                    android:padding="8dp" >
+
+                    <TextView
+                        android:id="@+id/label_filter_cui"
+                        android:layout_width="170dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/objective_details_label_cui"
+                        android:textAppearance="?android:textAppearanceMedium" />
+
+                    <EditText
+                        android:id="@+id/editText_filter_cui"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="11"
+                        android:hint="@string/objective_details_hint_cui"
+                        android:nextFocusDown="@+id/editText_filter_nrRc"
+                        android:nextFocusLeft="@+id/autoComplete_filter_beneficiary"
+                        android:nextFocusRight="@+id/editText_filter_nrRc"
+                        android:nextFocusUp="@+id/autoComplete_filter_beneficiary"
+                        android:singleLine="true"
+                        android:textAppearance="?android:textAppearanceMedium" />
+
+                    <ImageButton
+                        android:id="@+id/button_clearCui"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/background_selector"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_clear_black_48dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:orientation="horizontal"
+                    android:padding="8dp" >
+
+                    <TextView
+                        android:id="@+id/label_filter_nrRc"
+                        android:layout_width="170dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/objective_details_label_nr_rc"
+                        android:textAppearance="?android:textAppearanceMedium" />
+
+                    <EditText
+                        android:id="@+id/editText_filter_nrRc"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="11"
+                        android:hint="@string/objective_details_hint_nr_rc"
+                        android:nextFocusDown="@+id/filter_estValue_start"
+                        android:nextFocusLeft="@+id/editText_filter_cui"
+                        android:nextFocusRight="@+id/filter_estValue_start"
+                        android:singleLine="true"
+                        android:textAppearance="?android:textAppearanceMedium" />
+
+                    <ImageButton
+                        android:id="@+id/button_clearNrRc"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/background_selector"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_clear_black_48dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_filter_authDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/label_filter_authDate"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/filters_interval_authorization_start"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" >
+
+                    <TextView
+                        android:id="@+id/filter_authDate_start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/background_selector"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:textAppearance="?android:textAppearanceLarge" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:padding="4dp"
+                        android:text="@string/filters_interval_separator_dates"
+                        android:textAppearance="?android:textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/filter_authDate_end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/background_selector"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:textAppearance="?android:textAppearanceLarge" />
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/button_clearAuthDates"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_filter_authExpDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/label_filter_authExpDate"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/filters_interval_authorization_end"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" >
+
+                    <TextView
+                        android:id="@+id/filter_authExpDate_start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/background_selector"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:textAppearance="?android:textAppearanceLarge" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="4dp"
+                        android:text="@string/filters_interval_separator_dates"
+                        android:textAppearance="?android:textAppearanceLarge" />
+
+                    <TextView
+                        android:id="@+id/filter_authExpDate_end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/background_selector"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:textAppearance="?android:textAppearanceLarge" />
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/button_clearAuthExp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_filter_estValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:padding="8dp" >
+
+                <TextView
+                    android:id="@+id/label_filter_estValue"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/objective_details_label_objective_value"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" >
+
+                    <EditText
+                        android:id="@+id/filter_estValue_start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ems="7"
+                        android:gravity="center"
+                        android:hint="@string/filters_value_hint_minimum"
+                        android:inputType="numberDecimal"
+                        android:nextFocusDown="@+id/filter_estValue_end"
+                        android:nextFocusLeft="@+id/acText_filter_beneficiary"
+                        android:nextFocusRight="@+id/filter_estValue_end"
+                        android:textAppearance="?android:textAppearanceMedium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="4dp"
+                        android:text="@string/filters_interval_separator_dash"
+                        android:textAppearance="?android:textAppearanceMedium" />
+
+                    <EditText
+                        android:id="@+id/filter_estValue_end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ems="7"
+                        android:gravity="center"
+                        android:hint="@string/filters_value_hint_maximum"
+                        android:inputType="numberDecimal"
+                        android:nextFocusDown="@+id/editText_filter_postalCode"
+                        android:nextFocusLeft="@+id/filter_estValue_start"
+                        android:nextFocusRight="@+id/editText_filter_postalCode"
+                        android:textAppearance="?android:textAppearanceMedium" />
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/button_clearEstValues"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_filter_postalCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/label_filter_postalCode"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/objective_details_label_zip"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <EditText
+                    android:id="@+id/editText_filter_postalCode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="15"
+                    android:inputType="number"
+                    android:nextFocusDown="@+id/editText_filter_cvaCode"
+                    android:nextFocusLeft="@+id/filter_estValue_end"
+                    android:nextFocusRight="@+id/editText_filter_cvaCode" />
+
+                <ImageButton
+                    android:id="@+id/button_clearZip"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_filter_cvaCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/label_filter_cvaCode"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/filters_label_cva_code"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <EditText
+                    android:id="@+id/editText_filter_cvaCode"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="15"
+                    android:inputType="number"
+                    android:nextFocusDown="@null"
+                    android:nextFocusLeft="@+id/editText_filter_postalCode"
+                    android:nextFocusRight="@null" />
+
+                <ImageButton
+                    android:id="@+id/button_clearCvaCodes"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
