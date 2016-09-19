@@ -553,9 +553,10 @@ public class ObjectiveData {
 			foundObjective.setTelMeserias(cursor.getString(25));
 			// End Meserias fields Alin
 
-			foundObjective.setTelBenef(cursor.getString(23));
+			foundObjective.setTelBenef(cursor.getString(26));
 
-			foundObjective.setFiliala(cursor.getString(24));
+			foundObjective.setFiliala(cursor.getString(27));
+			
 
 			cursor.close();
 			db.close();
@@ -1102,6 +1103,95 @@ public class ObjectiveData {
 	}
 
 	/**
+	 * Added editAndUnrar method in order to unrar the archived objectives
+	 * Author: Alin;
+	 */
+	public void editAndUnrar(List<Object> objectiveData) {
+
+		Objective objective = null;
+		Calendar phaseStart = new GregorianCalendar();
+		Calendar phaseEnd = new GregorianCalendar();
+		long phaseDays = 0;
+
+		for (Object obj : objectiveData) {
+			if (obj instanceof Objective) {
+				objective = (Objective) obj;
+			}
+			if (obj instanceof Long) {
+				phaseDays = (Long) obj;
+			}
+			if (obj instanceof Pair) {
+				Pair<?, ?> pair = (Pair<?, ?>) obj;
+				phaseStart = (Calendar) pair.first;
+				phaseEnd = (Calendar) pair.second;
+			}
+		}
+
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DB_DATE_FORMAT);
+
+		// Get current phase from db
+		int currentDbPhase = -1;
+		String query = "SELECT o." + SQLiteHelper.PHASE_ID + " FROM " + SQLiteHelper.TABLE_OBJECTIVES + " o"
+				+ " WHERE o." + SQLiteHelper.ID + " = " + Integer.toString(objective.getId());
+
+		Cursor cursor = db.rawQuery(query, null);
+
+		cursor.moveToFirst();
+
+		if (cursor.getCount() > 0) {
+			currentDbPhase = cursor.getInt(0);
+		}
+
+		if (currentDbPhase != objective.getPhaseId()) {
+
+			values.put(SQLiteHelper.PHASE_ID, objective.getPhaseId());
+			values.put(SQLiteHelper.OBJECTIVE_ID, objective.getId());
+			values.put(SQLiteHelper.DAYS, phaseDays);
+			values.put(SQLiteHelper.PHASE_START, sdf.format(phaseStart.getTime()));
+			values.put(SQLiteHelper.PHASE_END, sdf.format(phaseEnd.getTime()));
+			values.put(SQLiteHelper.CVA_CODE, UserInfo.getInstance().getCod());
+
+			db.insert(SQLiteHelper.TABLE_PHASE_OBJ_VALUES, null, values);
+		}
+
+		// Update all objective fields
+		values.clear();
+
+		objective.setStatus(Objective.ACTIVE);
+
+		values.put(SQLiteHelper.TYPE_ID, objective.getTypeId());
+		values.put(SQLiteHelper.CVA_CODE, objective.getCvaCode());
+		values.put(SQLiteHelper.REGION_ID, objective.getRegionID());
+		values.put(SQLiteHelper.NAME, objective.getName());
+		values.put(SQLiteHelper.CREATION_DATE, sdf.format(objective.getCreationDate().getTime()));
+		values.put(SQLiteHelper.BENEFICIARY_ID, objective.getBeneficiaryId());
+		values.put(SQLiteHelper.BENEFICIARY_TYPE, objective.getBeneficiaryType());
+		values.put(SQLiteHelper.AUTHORIZATION_START, sdf.format(objective.getAuthorizationStart().getTime()));
+		values.put(SQLiteHelper.AUTHORIZATION_END, sdf.format(objective.getAuthorizationEnd().getTime()));
+		values.put(SQLiteHelper.ESTIMATION_VALUE, objective.getEstimationValue());
+		values.put(SQLiteHelper.ADDRESS, objective.getAddress());
+		values.put(SQLiteHelper.ZIP, objective.getZip());
+		values.put(SQLiteHelper.GPS, objective.getGps());
+		values.put(SQLiteHelper.STAGE_ID, objective.getStageId());
+		values.put(SQLiteHelper.PHASE_ID, objective.getPhaseId());
+		values.put(SQLiteHelper.EXPIRATION_PHASE, sdf.format(objective.getExpirationPhase().getTime()));
+		values.put(SQLiteHelper.STATUS, objective.getStatus());
+
+		db.update(SQLiteHelper.TABLE_OBJECTIVES, values, SQLiteHelper.ID + " = " + Integer.toString(objective.getId()),
+				null);
+
+		LogUtils logUtils = new LogUtils(context);
+		logUtils.logObjectiveChanged(objective);
+
+		db.close();
+		cursor.close();
+	}
+	
+	//End add
+	
+	/**
 	 * Used to populate objective name AutoCompleteTextView suggestions
 	 *
 	 * @param cvaCode
@@ -1140,3 +1230,4 @@ public class ObjectiveData {
 		return results;
 	}
 }
+

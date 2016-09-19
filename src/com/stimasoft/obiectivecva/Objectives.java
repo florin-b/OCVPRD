@@ -8,12 +8,12 @@ import java.util.List;
 
 import com.arabesque.obiectivecva.UserInfo;
 import com.arabesque.obiectivecva.Utils;
-import com.arabesque.obiectivecva.model.OperatiiTabele;
 import com.stimasoft.obiectivecva.adapters.ObjectiveListAdapter;
 import com.stimasoft.obiectivecva.listeners.PaginatedRecyclerOnScrollListener;
 import com.stimasoft.obiectivecva.models.db_classes.Objective;
 import com.stimasoft.obiectivecva.models.db_classes.ObjectiveLite;
 import com.stimasoft.obiectivecva.models.db_classes.Region;
+import com.stimasoft.obiectivecva.models.db_classes.Stage;
 import com.stimasoft.obiectivecva.models.db_classes.User;
 import com.stimasoft.obiectivecva.models.db_utilities.ObjectiveData;
 import com.stimasoft.obiectivecva.models.db_utilities.RegionData;
@@ -24,6 +24,7 @@ import com.stimasoft.obiectivecva.utils.FilterUtils;
 import com.stimasoft.obiectivecva.utils.SQLiteHelper;
 import com.stimasoft.obiectivecva.utils.Setup;
 import com.stimasoft.obiectivecva.utils.SharedPrefHelper;
+import com.stimasoft.obiectivecva.utils.StagePhaseSpinnerUtils;
 import com.stimasoft.obiectivecva.utils.ui.DatePickerDialogFragment;
 
 import android.app.AlarmManager;
@@ -51,6 +52,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -77,11 +79,16 @@ public class Objectives extends AppCompatActivity
 	int pastVisiblesItems;
 
 	private int currentOffset;
-
+	
+	//stage and phase filter, Author: Alin
+	private int lastSelectedStageId = -1;
+	
 	private Bundle bundle;
 
 	private boolean doubleBackToExitPressedOnce = false;
 	private boolean flagLaunchedFromMap = false;
+	//stage and phase filter, Author: Alin
+	private boolean objectiveTypeChanged = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -288,6 +295,53 @@ public class Objectives extends AppCompatActivity
 
 		defaultWhereArgs.put(SQLiteHelper.STATUS, new Pair<String, String>(FilterUtils.EQUALS, Integer.toString(Objective.ACTIVE)));
 
+		
+		// stage and phase objective, Author: Alin		
+
+		final Spinner spinnerStageObject = (Spinner) findViewById(R.id.spinner_filter_stage_objective);
+		final Spinner spinnerPhaseObject = (Spinner) findViewById(R.id.spinner_filter_phase_objective);
+
+		final StagePhaseSpinnerUtils spsUtils = new StagePhaseSpinnerUtils(this);
+		
+		spsUtils.populateAvailableStagesSpinner(spinnerStageObject, -1, 0, spinnerStageObject.getSelectedItemPosition());
+		lastSelectedStageId = ((Stage) spinnerStageObject.getSelectedItem()).getId();
+		
+		spinnerStageObject.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+				// TODO Auto-generated method stub
+				int selectedStageId = ((Stage) adapterView.getSelectedItem()).getId();
+				int selectedPhasePosition = spinnerPhaseObject.getSelectedItemPosition();
+				
+				if(selectedStageId != lastSelectedStageId || objectiveTypeChanged)
+				{
+					spsUtils.populateAvailablePhasesSpinner(spinnerPhaseObject, -1, selectedStageId);
+					
+					if(selectedStageId == lastSelectedStageId)
+					{
+						spinnerPhaseObject.setSelection(selectedPhasePosition);
+					}
+					lastSelectedStageId = selectedStageId;
+					objectiveTypeChanged = false;
+				}
+				
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> adapterView) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
+		
+		
+		// end stage and phase objective
+
+		
+		
 		final RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
 		objectivesList.setAdapter(objAdapter);
 
@@ -298,7 +352,7 @@ public class Objectives extends AppCompatActivity
 		objectivesList.addOnScrollListener(new PaginatedRecyclerOnScrollListener(this, lLManager));
 
 		TextView expPhaseHeader = (TextView) findViewById(R.id.textView_objectivesHeader_phaseExp);
-
+		
 		Spinner regionSpinner = (Spinner) findViewById(R.id.spinner_filter_region);
 		populateRegionsSpinner(regionSpinner);
 
@@ -391,6 +445,8 @@ public class Objectives extends AppCompatActivity
 			}
 		});
 
+		// **** Objective Name ****
+		// Modified By: Alin;		
 		TextView headerName = (TextView) findViewById(R.id.textView_objectivesHeader_name);
 		headerName.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -410,8 +466,19 @@ public class Objectives extends AppCompatActivity
 				}
 
 				// If another column besides name is selected
+				// Added the rest of the columns, Author: Alin;
 				if (!currentTableOrder.first.equals(SQLiteHelper.NAME)) {
+					TextView benefName = (TextView) findViewById(R.id.textView_objectivesBeneficiary_name);
+					TextView constrName = (TextView) findViewById(R.id.textView_objectivesConstructor_name);
+					TextView addrName = (TextView) findViewById(R.id.textView_objectivesAddress_detail);
+					TextView cityName = (TextView) findViewById(R.id.textView_objectivesCity_name);
+					TextView phaseName = (TextView) findViewById(R.id.textView_objectivesPhase_detail);
 					TextView expPhaseHeader = (TextView) findViewById(R.id.textView_objectivesHeader_phaseExp);
+					benefName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					constrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					addrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					cityName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					phaseName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
 					expPhaseHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
 
 					currentTableOrder = new Pair<String, String>(SQLiteHelper.NAME, FilterUtils.ASCENDING);
@@ -456,10 +523,565 @@ public class Objectives extends AppCompatActivity
 							ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
 
 					defaultOrderArgs = order;
-				}
+				}				
 			}
 		});
 
+		
+		//*9. in modul de afisare lista a obiectivelor se doreste sa se poata ordona afisarea (crescator/descrescator) dupa toate campurile afisate,
+		//Author: Alin;
+/*		
+		// **** TextView Ordering ****
+		TextView benefName = (TextView) findViewById(R.id.textView_objectivesBeneficiary_name);
+		TextView constrName = (TextView) findViewById(R.id.textView_objectivesConstructor_name);
+		TextView addrName = (TextView) findViewById(R.id.textView_objectivesAddress_detail);
+		TextView cityName = (TextView) findViewById(R.id.textView_objectivesCity_name);
+		TextView phaseName = (TextView) findViewById(R.id.textView_objectivesPhase_detail);
+		TextView phaseExp = (TextView) findViewById(R.id.textView_objectivesHeader_phaseExp);
+				
+		// **** Beneficiary ****
+		benefName.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				try{
+				ObjectiveData objectiveData = new ObjectiveData(getApplicationContext());
+				HashMap<String, Pair<String, String>> whereArgs = sharedPrefHelper.getFilters();
+
+				whereArgs.put(SQLiteHelper.STATUS, new Pair<String, String>(FilterUtils.EQUALS, Integer.toString(Objective.ACTIVE)));
+
+				String userFilter = "";
+
+				if (user.getUserType() == User.TYPE_CVA) {
+					userFilter = user.getCode();
+				} else if (user.getUserType() == User.TYPE_DVA) {
+					UserData userData = new UserData(getApplicationContext());
+					userFilter = userData.generateCvaCodesString(userData.getUsersForDva(user.getCode()));
+				}
+
+				// If another column besides name is selected
+				if (!currentTableOrder.first.equals(SQLiteHelper.NAME)) {
+					TextView headerName = (TextView) findViewById(R.id.textView_objectivesHeader_name);
+					TextView constrName = (TextView) findViewById(R.id.textView_objectivesConstructor_name);
+					TextView addrName = (TextView) findViewById(R.id.textView_objectivesAddress_detail);
+					TextView cityName = (TextView) findViewById(R.id.textView_objectivesCity_name);
+					TextView phaseName = (TextView) findViewById(R.id.textView_objectivesPhase_detail);
+					TextView expPhaseHeader = (TextView) findViewById(R.id.textView_objectivesHeader_phaseExp);
+					headerName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					constrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					addrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					cityName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					phaseName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					expPhaseHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+
+					currentTableOrder = new Pair<String, String>(SQLiteHelper.NAME, FilterUtils.ASCENDING);
+
+					HashMap<String, String> order = new HashMap<String, String>();
+					order.put(currentTableOrder.first, currentTableOrder.second);
+					objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+					RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+					objectivesList.setAdapter(objAdapter);
+
+					((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+							ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+					defaultOrderArgs = order;
+
+				} else if (currentTableOrder.second.equals(FilterUtils.ASCENDING)) {
+					currentTableOrder = new Pair<String, String>(SQLiteHelper.NAME, FilterUtils.DESCENDING);
+
+					HashMap<String, String> order = new HashMap<String, String>();
+					order.put(currentTableOrder.first, currentTableOrder.second);
+					objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+					RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+					objectivesList.setAdapter(objAdapter);
+
+					((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+							ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_down_white_24dp), null, null, null);
+
+					defaultOrderArgs = order;
+				} else {
+					currentTableOrder = new Pair<String, String>(SQLiteHelper.NAME, FilterUtils.ASCENDING);
+
+					HashMap<String, String> order = new HashMap<String, String>();
+					order.put(currentTableOrder.first, currentTableOrder.second);
+					objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+					RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+					objectivesList.setAdapter(objAdapter);
+
+					((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+							ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+					defaultOrderArgs = order;
+				}	
+				}
+				catch(Exception e)
+				{
+					for(int i=0; i<4; i++)
+					{
+						Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+					}
+				}
+			}
+				
+		}
+		);
+		
+		// **** Constructor ****
+		
+		constrName.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				try{
+				ObjectiveData objectiveData = new ObjectiveData(getApplicationContext());
+				HashMap<String, Pair<String, String>> whereArgs = sharedPrefHelper.getFilters();
+
+				whereArgs.put(SQLiteHelper.STATUS, new Pair<String, String>(FilterUtils.EQUALS, Integer.toString(Objective.ACTIVE)));
+
+				String userFilter = "";
+
+				if (user.getUserType() == User.TYPE_CVA) {
+					userFilter = user.getCode();
+				} else if (user.getUserType() == User.TYPE_DVA) {
+					UserData userData = new UserData(getApplicationContext());
+					userFilter = userData.generateCvaCodesString(userData.getUsersForDva(user.getCode()));
+				}
+
+				// If another column besides name is selected
+				if (!currentTableOrder.first.equals(SQLiteHelper.NAME)) {
+					TextView headerName = (TextView) findViewById(R.id.textView_objectivesHeader_name);
+					TextView benefName = (TextView) findViewById(R.id.textView_objectivesBeneficiary_name);
+					TextView addrName = (TextView) findViewById(R.id.textView_objectivesAddress_detail);
+					TextView cityName = (TextView) findViewById(R.id.textView_objectivesCity_name);
+					TextView phaseName = (TextView) findViewById(R.id.textView_objectivesPhase_detail);
+					TextView expPhaseHeader = (TextView) findViewById(R.id.textView_objectivesHeader_phaseExp);
+					headerName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					benefName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					addrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					cityName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					phaseName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					expPhaseHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+
+					currentTableOrder = new Pair<String, String>(SQLiteHelper.NAME, FilterUtils.ASCENDING);
+
+					HashMap<String, String> order = new HashMap<String, String>();
+					order.put(currentTableOrder.first, currentTableOrder.second);
+					objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+					RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+					objectivesList.setAdapter(objAdapter);
+
+					((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+							ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+					defaultOrderArgs = order;
+
+				} else if (currentTableOrder.second.equals(FilterUtils.ASCENDING)) {
+					currentTableOrder = new Pair<String, String>(SQLiteHelper.NAME, FilterUtils.DESCENDING);
+
+					HashMap<String, String> order = new HashMap<String, String>();
+					order.put(currentTableOrder.first, currentTableOrder.second);
+					objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+					RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+					objectivesList.setAdapter(objAdapter);
+
+					((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+							ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_down_white_24dp), null, null, null);
+
+					defaultOrderArgs = order;
+				} else {
+					currentTableOrder = new Pair<String, String>(SQLiteHelper.NAME, FilterUtils.ASCENDING);
+
+					HashMap<String, String> order = new HashMap<String, String>();
+					order.put(currentTableOrder.first, currentTableOrder.second);
+					objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+					RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+					objectivesList.setAdapter(objAdapter);
+
+					((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+							ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+					defaultOrderArgs = order;
+				}	
+				}
+				catch(Exception e)
+				{
+					for(int i=0; i<4; i++)
+					{
+						Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+					}
+				}
+			}
+				
+		}
+		);
+		
+		// **** Address ****
+		addrName.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				try{
+				ObjectiveData objectiveData = new ObjectiveData(getApplicationContext());
+				HashMap<String, Pair<String, String>> whereArgs = sharedPrefHelper.getFilters();
+
+				whereArgs.put(SQLiteHelper.STATUS, new Pair<String, String>(FilterUtils.EQUALS, Integer.toString(Objective.ACTIVE)));
+
+				String userFilter = "";
+
+				if (user.getUserType() == User.TYPE_CVA) {
+					userFilter = user.getCode();
+				} else if (user.getUserType() == User.TYPE_DVA) {
+					UserData userData = new UserData(getApplicationContext());
+					userFilter = userData.generateCvaCodesString(userData.getUsersForDva(user.getCode()));
+				}
+
+				// If another column besides name is selected
+				if (!currentTableOrder.first.equals(SQLiteHelper.ADDRESS)) {
+					TextView headerName = (TextView) findViewById(R.id.textView_objectivesHeader_name);
+					TextView benefName = (TextView) findViewById(R.id.textView_objectivesBeneficiary_name);
+					TextView constrName = (TextView) findViewById(R.id.textView_objectivesConstructor_name);
+					TextView cityName = (TextView) findViewById(R.id.textView_objectivesCity_name);
+					TextView phaseName = (TextView) findViewById(R.id.textView_objectivesPhase_detail);
+					TextView expPhaseHeader = (TextView) findViewById(R.id.textView_objectivesHeader_phaseExp);
+					headerName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					benefName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					constrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					cityName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					phaseName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					expPhaseHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+
+					currentTableOrder = new Pair<String, String>(SQLiteHelper.ADDRESS, FilterUtils.ASCENDING);
+
+					HashMap<String, String> order = new HashMap<String, String>();
+					order.put(currentTableOrder.first, currentTableOrder.second);
+					objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+					RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+					objectivesList.setAdapter(objAdapter);
+
+					((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+							ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+					defaultOrderArgs = order;
+
+				} else if (currentTableOrder.second.equals(FilterUtils.ASCENDING)) {
+					currentTableOrder = new Pair<String, String>(SQLiteHelper.ADDRESS, FilterUtils.DESCENDING);
+
+					HashMap<String, String> order = new HashMap<String, String>();
+					order.put(currentTableOrder.first, currentTableOrder.second);
+					objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+					RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+					objectivesList.setAdapter(objAdapter);
+
+					((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+							ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_down_white_24dp), null, null, null);
+
+					defaultOrderArgs = order;
+				} else {
+					currentTableOrder = new Pair<String, String>(SQLiteHelper.ADDRESS, FilterUtils.ASCENDING);
+
+					HashMap<String, String> order = new HashMap<String, String>();
+					order.put(currentTableOrder.first, currentTableOrder.second);
+					objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+					RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+					objectivesList.setAdapter(objAdapter);
+
+					((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+							ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+					defaultOrderArgs = order;
+				}	
+				}
+				catch(Exception e)
+				{
+					for(int i=0; i<4; i++)
+					{
+						Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+					}
+				}
+			}
+				
+		}
+		);
+		
+		// **** City ****
+				cityName.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						try{
+						ObjectiveData objectiveData = new ObjectiveData(getApplicationContext());
+						HashMap<String, Pair<String, String>> whereArgs = sharedPrefHelper.getFilters();
+
+						whereArgs.put(SQLiteHelper.STATUS, new Pair<String, String>(FilterUtils.EQUALS, Integer.toString(Objective.ACTIVE)));
+
+						String userFilter = "";
+
+						if (user.getUserType() == User.TYPE_CVA) {
+							userFilter = user.getCode();
+						} else if (user.getUserType() == User.TYPE_DVA) {
+							UserData userData = new UserData(getApplicationContext());
+							userFilter = userData.generateCvaCodesString(userData.getUsersForDva(user.getCode()));
+						}
+
+						// If another column besides name is selected
+						if (!currentTableOrder.first.equals(SQLiteHelper.REGION_ID)) {
+							TextView headerName = (TextView) findViewById(R.id.textView_objectivesHeader_name);
+							TextView benefName = (TextView) findViewById(R.id.textView_objectivesBeneficiary_name);
+							TextView constrName = (TextView) findViewById(R.id.textView_objectivesConstructor_name);
+							TextView addrName = (TextView) findViewById(R.id.textView_objectivesAddress_detail);
+							TextView phaseName = (TextView) findViewById(R.id.textView_objectivesPhase_detail);
+							TextView expPhaseHeader = (TextView) findViewById(R.id.textView_objectivesHeader_phaseExp);
+							headerName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							benefName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							constrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							addrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							phaseName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							expPhaseHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.REGION_ID, FilterUtils.ASCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+
+						} else if (currentTableOrder.second.equals(FilterUtils.ASCENDING)) {
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.REGION_ID, FilterUtils.DESCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_down_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+						} else {
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.REGION_ID, FilterUtils.ASCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+						}	
+						}
+						catch(Exception e)
+						{
+							for(int i=0; i<4; i++)
+							{
+								Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+							}
+						}
+					}
+						
+				}
+				);
+				
+				// **** Phase Name ****
+				phaseName.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						try{
+						ObjectiveData objectiveData = new ObjectiveData(getApplicationContext());
+						HashMap<String, Pair<String, String>> whereArgs = sharedPrefHelper.getFilters();
+
+						whereArgs.put(SQLiteHelper.STATUS, new Pair<String, String>(FilterUtils.EQUALS, Integer.toString(Objective.ACTIVE)));
+
+						String userFilter = "";
+
+						if (user.getUserType() == User.TYPE_CVA) {
+							userFilter = user.getCode();
+						} else if (user.getUserType() == User.TYPE_DVA) {
+							UserData userData = new UserData(getApplicationContext());
+							userFilter = userData.generateCvaCodesString(userData.getUsersForDva(user.getCode()));
+						}
+
+						// If another column besides name is selected
+						if (!currentTableOrder.first.equals(SQLiteHelper.PHASE_ID)) {
+							TextView headerName = (TextView) findViewById(R.id.textView_objectivesHeader_name);
+							TextView benefName = (TextView) findViewById(R.id.textView_objectivesBeneficiary_name);
+							TextView constrName = (TextView) findViewById(R.id.textView_objectivesConstructor_name);
+							TextView addrName = (TextView) findViewById(R.id.textView_objectivesAddress_detail);
+							TextView cityName = (TextView) findViewById(R.id.textView_objectivesCity_name);
+							TextView expPhaseHeader = (TextView) findViewById(R.id.textView_objectivesHeader_phaseExp);
+							headerName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							benefName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							constrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							addrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							cityName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							expPhaseHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.PHASE_ID, FilterUtils.ASCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+
+						} else if (currentTableOrder.second.equals(FilterUtils.ASCENDING)) {
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.PHASE_ID, FilterUtils.DESCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_down_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+						} else {
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.PHASE_ID, FilterUtils.ASCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+						}	
+						}
+						catch(Exception e)
+						{
+							for(int i=0; i<4; i++)
+							{
+								Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+							}
+						}
+					}
+						
+				}
+				);
+				
+				// **** Phase Expiration ****
+				phaseExp.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						try{
+						ObjectiveData objectiveData = new ObjectiveData(getApplicationContext());
+						HashMap<String, Pair<String, String>> whereArgs = sharedPrefHelper.getFilters();
+
+						whereArgs.put(SQLiteHelper.STATUS, new Pair<String, String>(FilterUtils.EQUALS, Integer.toString(Objective.ACTIVE)));
+
+						String userFilter = "";
+
+						if (user.getUserType() == User.TYPE_CVA) {
+							userFilter = user.getCode();
+						} else if (user.getUserType() == User.TYPE_DVA) {
+							UserData userData = new UserData(getApplicationContext());
+							userFilter = userData.generateCvaCodesString(userData.getUsersForDva(user.getCode()));
+						}
+
+						// If another column besides name is selected
+						if (!currentTableOrder.first.equals(SQLiteHelper.EXPIRATION_PHASE)) {
+							TextView expPhaseHeader = (TextView) findViewById(R.id.textView_objectivesHeader_name);
+							TextView benefName = (TextView) findViewById(R.id.textView_objectivesBeneficiary_name);
+							TextView constrName = (TextView) findViewById(R.id.textView_objectivesConstructor_name);
+							TextView addrName = (TextView) findViewById(R.id.textView_objectivesAddress_detail);
+							TextView cityName = (TextView) findViewById(R.id.textView_objectivesCity_name);
+							TextView phaseName = (TextView) findViewById(R.id.textView_objectivesPhase_detail);
+							expPhaseHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							benefName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							constrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							addrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							cityName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							phaseName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.EXPIRATION_PHASE, FilterUtils.ASCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+
+						} else if (currentTableOrder.second.equals(FilterUtils.ASCENDING)) {
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.EXPIRATION_PHASE, FilterUtils.DESCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_down_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+						} else {
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.EXPIRATION_PHASE, FilterUtils.ASCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+						}	
+						}
+						catch(Exception e)
+						{
+							for(int i=0; i<4; i++)
+							{
+								Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+							}
+						}
+					}
+						
+				}
+				);
+				
+		//End Task
+*/		
 		FloatingActionButton fabAddObjective = (FloatingActionButton) findViewById(R.id.fab_addObjective);
 
 		if (user.getUserType() == User.TYPE_DVA) {
@@ -475,6 +1097,8 @@ public class Objectives extends AppCompatActivity
 			});
 		}
 
+		
+		
 		Setup setup = new Setup(this);
 		setup.setupToolbar(toolbar);
 		setup.setupDrawer(drawerLayout, navView, toolbar);
@@ -498,7 +1122,7 @@ public class Objectives extends AppCompatActivity
 	 * Sets up the UI and filters for viewing of the archived objectives
 	 */
 	private void setupInactiveView() {
-		Log.d("DBG", "Seeting up Inactive View");
+		Log.d("DBG", "Setting up Inactive View");
 		this.setTitle(R.string.objective_title_archive);
 
 		final ObjectiveData objectiveData = new ObjectiveData(this);
@@ -620,7 +1244,7 @@ public class Objectives extends AppCompatActivity
 				drawerLayout.closeDrawers();
 			}
 		});
-
+//#returnhere
 		TextView headerName = (TextView) findViewById(R.id.textView_objectivesHeader_name);
 		headerName.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -642,8 +1266,19 @@ public class Objectives extends AppCompatActivity
 				}
 
 				// If another column besides name is selected
+				// Added the rest of the columns, Author: Alin;
 				if (!currentTableOrder.first.equals(SQLiteHelper.NAME)) {
+					TextView benefName = (TextView) findViewById(R.id.textView_objectivesBeneficiary_name);
+					TextView constrName = (TextView) findViewById(R.id.textView_objectivesConstructor_name);
+					TextView addrName = (TextView) findViewById(R.id.textView_objectivesAddress_detail);
+					TextView cityName = (TextView) findViewById(R.id.textView_objectivesCity_name);
+					TextView phaseName = (TextView) findViewById(R.id.textView_objectivesPhase_detail);
 					TextView expPhaseHeader = (TextView) findViewById(R.id.textView_objectivesHeader_phaseExp);
+					benefName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					constrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					addrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					cityName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					phaseName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
 					expPhaseHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
 
 					currentTableOrder = new Pair<String, String>(SQLiteHelper.NAME, FilterUtils.ASCENDING);
@@ -693,7 +1328,471 @@ public class Objectives extends AppCompatActivity
 				}
 			}
 		});
+		/*
+		//*9. in modul de afisare lista a obiectivelor se doreste sa se poata ordona afisarea (crescator/descrescator) dupa toate campurile afisate,
+		//Author: Alin;
+		
+		// **** TextView Ordering ****
+				TextView benefName = (TextView) findViewById(R.id.textView_objectivesBeneficiary_name);
+				TextView constrName = (TextView) findViewById(R.id.textView_objectivesConstructor_name);
+				TextView addrName = (TextView) findViewById(R.id.textView_objectivesAddress_detail);
+				TextView cityName = (TextView) findViewById(R.id.textView_objectivesCity_name);
+				TextView phaseName = (TextView) findViewById(R.id.textView_objectivesPhase_detail);
+				TextView phaseExp = (TextView) findViewById(R.id.textView_objectivesHeader_phaseExp);
+						
+				// **** Beneficiary ****
+				benefName.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						try{
+						ObjectiveData objectiveData = new ObjectiveData(getApplicationContext());
+						HashMap<String, Pair<String, String>> whereArgs = sharedPrefHelper.getFilters();
 
+						whereArgs.put(SQLiteHelper.STATUS, new Pair<String, String>(FilterUtils.EQUALS, Integer.toString(Objective.INACTIVE)));
+
+						String userFilter = "";
+
+						if (user.getUserType() == User.TYPE_CVA) {
+							userFilter = user.getCode();
+						} else if (user.getUserType() == User.TYPE_DVA) {
+							UserData userData = new UserData(getApplicationContext());
+							userFilter = userData.generateCvaCodesString(userData.getUsersForDva(user.getCode()));
+						}
+
+						// If another column besides name is selected
+						if (!currentTableOrder.first.equals(SQLiteHelper.NAME)) {
+							TextView headerName = (TextView) findViewById(R.id.textView_objectivesHeader_name);
+							TextView constrName = (TextView) findViewById(R.id.textView_objectivesConstructor_name);
+							TextView addrName = (TextView) findViewById(R.id.textView_objectivesAddress_detail);
+							TextView cityName = (TextView) findViewById(R.id.textView_objectivesCity_name);
+							TextView phaseName = (TextView) findViewById(R.id.textView_objectivesPhase_detail);
+							TextView expPhaseHeader = (TextView) findViewById(R.id.textView_objectivesHeader_phaseExp);
+							headerName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							constrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							addrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							cityName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							phaseName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							expPhaseHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.NAME, FilterUtils.ASCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+
+						} else if (currentTableOrder.second.equals(FilterUtils.ASCENDING)) {
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.NAME, FilterUtils.DESCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_down_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+						} else {
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.NAME, FilterUtils.ASCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+						}	
+						}
+						catch(Exception e)
+						{
+							for(int i=0; i<4; i++)
+							{
+								Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+							}
+						}
+					}
+						
+				}
+				);
+				
+				// **** Constructor ****
+				
+				constrName.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						try{
+						ObjectiveData objectiveData = new ObjectiveData(getApplicationContext());
+						HashMap<String, Pair<String, String>> whereArgs = sharedPrefHelper.getFilters();
+
+						whereArgs.put(SQLiteHelper.STATUS, new Pair<String, String>(FilterUtils.EQUALS, Integer.toString(Objective.INACTIVE)));
+
+						String userFilter = "";
+
+						if (user.getUserType() == User.TYPE_CVA) {
+							userFilter = user.getCode();
+						} else if (user.getUserType() == User.TYPE_DVA) {
+							UserData userData = new UserData(getApplicationContext());
+							userFilter = userData.generateCvaCodesString(userData.getUsersForDva(user.getCode()));
+						}
+
+						// If another column besides name is selected
+						if (!currentTableOrder.first.equals(SQLiteHelper.NAME)) {
+							TextView headerName = (TextView) findViewById(R.id.textView_objectivesHeader_name);
+							TextView benefName = (TextView) findViewById(R.id.textView_objectivesBeneficiary_name);
+							TextView addrName = (TextView) findViewById(R.id.textView_objectivesAddress_detail);
+							TextView cityName = (TextView) findViewById(R.id.textView_objectivesCity_name);
+							TextView phaseName = (TextView) findViewById(R.id.textView_objectivesPhase_detail);
+							TextView expPhaseHeader = (TextView) findViewById(R.id.textView_objectivesHeader_phaseExp);
+							headerName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							benefName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							addrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							cityName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							phaseName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							expPhaseHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.NAME, FilterUtils.ASCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+
+						} else if (currentTableOrder.second.equals(FilterUtils.ASCENDING)) {
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.NAME, FilterUtils.DESCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_down_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+						} else {
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.NAME, FilterUtils.ASCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+						}	
+						}
+						catch(Exception e)
+						{
+							for(int i=0; i<4; i++)
+							{
+								Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+							}
+						}
+					}
+						
+				}
+				);
+				
+				// **** Address ****
+				addrName.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						try{
+						ObjectiveData objectiveData = new ObjectiveData(getApplicationContext());
+						HashMap<String, Pair<String, String>> whereArgs = sharedPrefHelper.getFilters();
+
+						whereArgs.put(SQLiteHelper.STATUS, new Pair<String, String>(FilterUtils.EQUALS, Integer.toString(Objective.INACTIVE)));
+
+						String userFilter = "";
+
+						if (user.getUserType() == User.TYPE_CVA) {
+							userFilter = user.getCode();
+						} else if (user.getUserType() == User.TYPE_DVA) {
+							UserData userData = new UserData(getApplicationContext());
+							userFilter = userData.generateCvaCodesString(userData.getUsersForDva(user.getCode()));
+						}
+
+						// If another column besides name is selected
+						if (!currentTableOrder.first.equals(SQLiteHelper.ADDRESS)) {
+							TextView headerName = (TextView) findViewById(R.id.textView_objectivesHeader_name);
+							TextView benefName = (TextView) findViewById(R.id.textView_objectivesBeneficiary_name);
+							TextView constrName = (TextView) findViewById(R.id.textView_objectivesConstructor_name);
+							TextView cityName = (TextView) findViewById(R.id.textView_objectivesCity_name);
+							TextView phaseName = (TextView) findViewById(R.id.textView_objectivesPhase_detail);
+							TextView expPhaseHeader = (TextView) findViewById(R.id.textView_objectivesHeader_phaseExp);
+							headerName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							benefName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							constrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							cityName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							phaseName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+							expPhaseHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.ADDRESS, FilterUtils.ASCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+
+						} else if (currentTableOrder.second.equals(FilterUtils.ASCENDING)) {
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.ADDRESS, FilterUtils.DESCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_down_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+						} else {
+							currentTableOrder = new Pair<String, String>(SQLiteHelper.ADDRESS, FilterUtils.ASCENDING);
+
+							HashMap<String, String> order = new HashMap<String, String>();
+							order.put(currentTableOrder.first, currentTableOrder.second);
+							objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+							RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+							objectivesList.setAdapter(objAdapter);
+
+							((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+									ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+							defaultOrderArgs = order;
+						}	
+						}
+						catch(Exception e)
+						{
+							for(int i=0; i<4; i++)
+							{
+								Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+							}
+						}
+					}
+						
+				}
+				);
+				
+				// **** City ****
+						cityName.setOnClickListener(new View.OnClickListener() {
+							@Override
+							public void onClick(View view) {
+								try{
+								ObjectiveData objectiveData = new ObjectiveData(getApplicationContext());
+								HashMap<String, Pair<String, String>> whereArgs = sharedPrefHelper.getFilters();
+
+								whereArgs.put(SQLiteHelper.STATUS, new Pair<String, String>(FilterUtils.EQUALS, Integer.toString(Objective.INACTIVE)));
+
+								String userFilter = "";
+
+								if (user.getUserType() == User.TYPE_CVA) {
+									userFilter = user.getCode();
+								} else if (user.getUserType() == User.TYPE_DVA) {
+									UserData userData = new UserData(getApplicationContext());
+									userFilter = userData.generateCvaCodesString(userData.getUsersForDva(user.getCode()));
+								}
+
+								// If another column besides name is selected
+								if (!currentTableOrder.first.equals(SQLiteHelper.REGION_ID)) {
+									TextView headerName = (TextView) findViewById(R.id.textView_objectivesHeader_name);
+									TextView benefName = (TextView) findViewById(R.id.textView_objectivesBeneficiary_name);
+									TextView constrName = (TextView) findViewById(R.id.textView_objectivesConstructor_name);
+									TextView addrName = (TextView) findViewById(R.id.textView_objectivesAddress_detail);
+									TextView phaseName = (TextView) findViewById(R.id.textView_objectivesPhase_detail);
+									TextView expPhaseHeader = (TextView) findViewById(R.id.textView_objectivesHeader_phaseExp);
+									headerName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+									benefName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+									constrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+									addrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+									phaseName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+									expPhaseHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+
+									currentTableOrder = new Pair<String, String>(SQLiteHelper.REGION_ID, FilterUtils.ASCENDING);
+
+									HashMap<String, String> order = new HashMap<String, String>();
+									order.put(currentTableOrder.first, currentTableOrder.second);
+									objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+									RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+									objectivesList.setAdapter(objAdapter);
+
+									((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+											ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+									defaultOrderArgs = order;
+
+								} else if (currentTableOrder.second.equals(FilterUtils.ASCENDING)) {
+									currentTableOrder = new Pair<String, String>(SQLiteHelper.REGION_ID, FilterUtils.DESCENDING);
+
+									HashMap<String, String> order = new HashMap<String, String>();
+									order.put(currentTableOrder.first, currentTableOrder.second);
+									objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+									RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+									objectivesList.setAdapter(objAdapter);
+
+									((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+											ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_down_white_24dp), null, null, null);
+
+									defaultOrderArgs = order;
+								} else {
+									currentTableOrder = new Pair<String, String>(SQLiteHelper.REGION_ID, FilterUtils.ASCENDING);
+
+									HashMap<String, String> order = new HashMap<String, String>();
+									order.put(currentTableOrder.first, currentTableOrder.second);
+									objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+									RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+									objectivesList.setAdapter(objAdapter);
+
+									((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+											ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+									defaultOrderArgs = order;
+								}	
+								}
+								catch(Exception e)
+								{
+									for(int i=0; i<4; i++)
+									{
+										Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+									}
+								}
+							}
+								
+						}
+						);
+						
+						// **** Phase Name ****
+						phaseName.setOnClickListener(new View.OnClickListener() {
+							@Override
+							public void onClick(View view) {
+								try{
+								ObjectiveData objectiveData = new ObjectiveData(getApplicationContext());
+								HashMap<String, Pair<String, String>> whereArgs = sharedPrefHelper.getFilters();
+
+								whereArgs.put(SQLiteHelper.STATUS, new Pair<String, String>(FilterUtils.EQUALS, Integer.toString(Objective.INACTIVE)));
+
+								String userFilter = "";
+
+								if (user.getUserType() == User.TYPE_CVA) {
+									userFilter = user.getCode();
+								} else if (user.getUserType() == User.TYPE_DVA) {
+									UserData userData = new UserData(getApplicationContext());
+									userFilter = userData.generateCvaCodesString(userData.getUsersForDva(user.getCode()));
+								}
+
+								// If another column besides name is selected
+								if (!currentTableOrder.first.equals(SQLiteHelper.PHASE_ID)) {
+									TextView headerName = (TextView) findViewById(R.id.textView_objectivesHeader_name);
+									TextView benefName = (TextView) findViewById(R.id.textView_objectivesBeneficiary_name);
+									TextView constrName = (TextView) findViewById(R.id.textView_objectivesConstructor_name);
+									TextView addrName = (TextView) findViewById(R.id.textView_objectivesAddress_detail);
+									TextView cityName = (TextView) findViewById(R.id.textView_objectivesCity_name);
+									TextView expPhaseHeader = (TextView) findViewById(R.id.textView_objectivesHeader_phaseExp);
+									headerName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+									benefName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+									constrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+									addrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+									cityName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+									expPhaseHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+
+									currentTableOrder = new Pair<String, String>(SQLiteHelper.PHASE_ID, FilterUtils.ASCENDING);
+
+									HashMap<String, String> order = new HashMap<String, String>();
+									order.put(currentTableOrder.first, currentTableOrder.second);
+									objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+									RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+									objectivesList.setAdapter(objAdapter);
+
+									((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+											ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+									defaultOrderArgs = order;
+
+								} else if (currentTableOrder.second.equals(FilterUtils.ASCENDING)) {
+									currentTableOrder = new Pair<String, String>(SQLiteHelper.PHASE_ID, FilterUtils.DESCENDING);
+
+									HashMap<String, String> order = new HashMap<String, String>();
+									order.put(currentTableOrder.first, currentTableOrder.second);
+									objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+									RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+									objectivesList.setAdapter(objAdapter);
+
+									((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+											ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_down_white_24dp), null, null, null);
+
+									defaultOrderArgs = order;
+								} else {
+									currentTableOrder = new Pair<String, String>(SQLiteHelper.PHASE_ID, FilterUtils.ASCENDING);
+
+									HashMap<String, String> order = new HashMap<String, String>();
+									order.put(currentTableOrder.first, currentTableOrder.second);
+									objAdapter = new ObjectiveListAdapter(Objectives.this, objectiveData.getListObjectives(userFilter, 0, whereArgs, order), mode);
+
+									RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
+									objectivesList.setAdapter(objAdapter);
+
+									((TextView) view).setCompoundDrawablesWithIntrinsicBounds(
+											ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null);
+
+									defaultOrderArgs = order;
+								}	
+								}
+								catch(Exception e)
+								{
+									for(int i=0; i<4; i++)
+									{
+										Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+									}
+								}
+							}
+								
+						}
+						);
+		
+		//End task
+*/		
 		TextView headerPhaseExp = (TextView) findViewById(R.id.textView_objectivesHeader_phaseExp);
 		headerPhaseExp.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -718,8 +1817,18 @@ public class Objectives extends AppCompatActivity
 				if (!currentTableOrder.first.equals(SQLiteHelper.EXPIRATION_PHASE)) {
 					currentTableOrder = new Pair<String, String>(SQLiteHelper.EXPIRATION_PHASE, FilterUtils.ASCENDING);
 
-					TextView nameHeader = (TextView) findViewById(R.id.textView_objectivesHeader_name);
-					nameHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					TextView expPhaseHeader = (TextView) findViewById(R.id.textView_objectivesHeader_name);
+					TextView benefName = (TextView) findViewById(R.id.textView_objectivesBeneficiary_name);
+					TextView constrName = (TextView) findViewById(R.id.textView_objectivesConstructor_name);
+					TextView addrName = (TextView) findViewById(R.id.textView_objectivesAddress_detail);
+					TextView cityName = (TextView) findViewById(R.id.textView_objectivesCity_name);
+					TextView phaseName = (TextView) findViewById(R.id.textView_objectivesPhase_detail);
+					expPhaseHeader.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					benefName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					constrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					addrName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					cityName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+					phaseName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
 
 					HashMap<String, String> order = new HashMap<String, String>();
 					order.put(currentTableOrder.first, currentTableOrder.second);
@@ -937,3 +2046,10 @@ public class Objectives extends AppCompatActivity
 	}
 
 }
+
+
+
+
+
+
+

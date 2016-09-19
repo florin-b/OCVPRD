@@ -13,6 +13,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import com.arabesque.obiectivecva.UserInfo;
 import com.arabesque.obiectivecva.Utils;
@@ -143,6 +144,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		Setup setup = new Setup(this);
 		setup.setupToolbarBack(toolbar);
 
+		
 		setupMapFunctionality();
 		ObjectiveData objectiveData = new ObjectiveData(this);
 
@@ -247,7 +249,11 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		case R.id.action_archive:
 			archiveObjective();
 			break;
-
+// **** Added Unrar Objective case, Author: Alin ****
+		case R.id.action_unrar:
+			unrarObjective();
+			break;
+// End Add			
 		case R.id.mapModHybrid:
 			map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 			break;
@@ -468,16 +474,6 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 			estValueText.setError(getString(R.string.error_incorrect_completion));
 			thereAreErrors = true;
 		}
-
-		// Handle estimation value
-/*
-		if (estValueText.getText().length() > 0) {
-			estimatedValue = Float.parseFloat(estValueText.getText().toString());
-		} else {
-			estValueText.setError(getString(R.string.error_incorrect_completion));
-			thereAreErrors = true;
-		}
-*/
 		
 		// Get date at time of creation
 		Calendar creationCalendar = new GregorianCalendar();
@@ -825,7 +821,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 		return phases;
 	}
-
+	
 	private void populateSpinnerExecutant(Spinner spinner, Objective objective) {
 		List<String> listExec = EnumTipExecutant.getTipExecNames();
 		String[] arrayExec = listExec.toArray(new String[listExec.size()]);
@@ -1829,6 +1825,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 			}
 		});
 
+		
 		// Setup Phase spinner
 		spsUtils.populateAvailablePhasesSpinner(phaseSpinner, objectiveId, objective.getStageId());
 
@@ -1864,10 +1861,11 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 						builder.setPositiveButton(getString(R.string.stage_phase_warning_button_positive), null);
 						builder.show();
 					}
-
+				
 					lastSelectedPhaseHierarchy = ((Phase) adapterView.getSelectedItem()).getHierarchy();
 					objectiveStageChanged = false;
-				}
+				}		
+				
 			}
 
 			@Override
@@ -1875,7 +1873,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 			}
 		});
-
+		
 		final TextView labelObjTpeGrp = (TextView) findViewById(R.id.label_objective_type);
 
 		grpObjType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -1925,17 +1923,20 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 		// Setup phase end field
 		TextView textViewPhaseEnd = (TextView) findViewById(R.id.textView_objective_phaseEndDate);
-		textViewPhaseEnd.setText(sdf.format(phaseEndCalendar.getTime()));
-
+		textViewPhaseEnd.setText(sdf.format(phaseEndCalendar.getTime()));		
+		
 		LinearLayout phaseEnd = (LinearLayout) findViewById(R.id.layout_phaseEndDate);
 		phaseEndClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD,
 				EditDateClickListener.TYPE_END, phaseStartCalendar, phaseEndCalendar,
 				R.id.textView_objective_phaseEndDate, R.id.textView_objective_phaseStartDate);
 		phaseEnd.setOnClickListener(phaseEndClickListener);
-
-		// Setup phase duration
+		
+		
+		
+		// Setup phase duration 
 		EditText editTextPhaseDuration = (EditText) findViewById(R.id.editText_objective_phaseDuration);
 		editTextPhaseDuration.setText(Integer.toString(currentPhaseDuration));
+		
 
 		editTextPhaseDuration.addTextChangedListener(
 				new PhaseDurationChangeWatcher(this, phaseEndClickListener, textViewPhaseStart, textViewPhaseEnd));
@@ -2001,7 +2002,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 			map.setOnMapLongClickListener(null);
 		}
-
+		
 		// Put a marker where the objective is
 		// String[] latlong = objective.getGps().split(",");
 		double latitude = Double.parseDouble(latlong[0]);
@@ -2112,6 +2113,41 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		Log.d("DBG", "Am salvat obiectivul");
 	}
 
+	/** 8. se doreste crearea scoaterii din arhiva a unui obiectiv dus din greseala acolo
+	 * Convenience method to unrar an objective
+	 * Author: Alin;
+	 */
+	
+	private void unrarObjective()
+	{
+		Setup setup = new Setup(AddEditObjective.this);
+		setup.hideKeyboard();
+		
+		ObjectiveData objectiveData = new ObjectiveData(this);
+		savedObjective = createObjectiveFromForm();
+		if(savedObjective != null)
+		{
+			objectiveData.editAndUnrar(savedObjective);
+			Objective tempObjective = null;
+			
+			for(Object obj : savedObjective)
+			{
+				if(obj instanceof Objective)
+				{
+					tempObjective = (Objective) obj;
+				}
+			}
+			
+			Intent i = getIntent();
+			i.putExtra(Constants.KEY_COORDINATES, tempObjective.getGps());
+			setResult(RESULT_OK, i);
+			finish();
+			
+			sendLocalDataToServer();
+		}
+		Log.d("DGB", "Am dezarhivat obiectivul");
+	}
+	
 	/**
 	 * Disables all the provided views in order to prevent editing
 	 *
@@ -2138,6 +2174,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		}
 
 	}
+
 
 	@Override
 	public void onDateSelected(Calendar limit, int modifierPurpose, int modifierType, int changeTarget,
@@ -2170,6 +2207,13 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		case R.id.textView_objective_phaseStartDate:
 			phaseEndClickListener.setDefaultDate(limit);
 			TextView labelPhaseEnd = (TextView) findViewById(R.id.label_objective_phaseEndDate);
+			//phaseEnd, Author: Alin;
+			try {
+				onPhaseEndChanged(limit, true);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			labelPhaseEnd.setError(null);
 			phaseStartClickListener.setLimit(limit);
 			break;
@@ -2177,9 +2221,16 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		case R.id.textView_objective_phaseEndDate:
 			phaseStartClickListener.setDefaultDate(limit);
 			TextView labelPhaseStart = (TextView) findViewById(R.id.label_objective_phaseStartDate);
+			//phaseStart, Author: Alin;
+			try {
+				onPhaseEndChanged(limit, true);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			labelPhaseStart.setError(null);
 			limit.add(Calendar.DAY_OF_MONTH, daysInt);
-			phaseEndClickListener.setLimit(limit);
+			phaseEndClickListener.setLimit(limit);			
 			break;
 
 		case R.id.textView_objective_addDate:
@@ -2201,11 +2252,38 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 			phaseEndClickListener.setDefaultDate(newLimit);
 
 			TextView phaseEndText = (TextView) findViewById(R.id.textView_objective_phaseEndDate);
-			SimpleDateFormat sdf = new SimpleDateFormat(Constants.USER_DATE_FORMAT);
+			SimpleDateFormat sdf = new SimpleDateFormat(Constants.USER_DATE_FORMAT);			
 
 			phaseEndText.setText(sdf.format(newLimit.getTime()));
+			
 		}
 	}
+	
+/* Added onPhaseEndChanged method that changes the phaseDuration
+ *  when phaseStart and phaseEnd are modified
+ *  Author: Alin; 
+ *  */
+	public void onPhaseEndChanged(Calendar newLimit, boolean changeDate) throws ParseException
+	{
+		phaseEndClickListener.setLimit(newLimit);
+		EditText phaseDuration = (EditText) findViewById(R.id.editText_objective_phaseDuration);		
+		if(changeDate)
+		{
+			
+			TextView phaseStartText = (TextView) findViewById(R.id.textView_objective_phaseStartDate);
+			TextView phaseEndText = (TextView) findViewById(R.id.textView_objective_phaseEndDate);
+			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+			
+			Date startDate = sdf.parse(phaseStartText.getText().toString());
+			Date endDate = sdf.parse(phaseEndText.getText().toString());
+			
+			long diff = endDate.getTime() - startDate.getTime();
+			int calculatedDays = (int)TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+			
+			phaseDuration.setText(Integer.toString(calculatedDays));
+		}	
+	}
+//End add
 
 	private class StageSpinnerAdapter extends ArrayAdapter<Stage> {
 
@@ -2290,8 +2368,12 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 	/**
 	 * Setup method for defining the behavior of the map fragment
 	 */
+	
+//returnhereTAB2	
+	
 	private void setupMapFunctionality() {
 		// SET UP Google Map
+
 		SupportMapFragment mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
 		map = mapFrag.getMap();
@@ -2747,3 +2829,22 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		return currentPosition;
 	}
 }
+
+
+//Resourcefull code
+/*
+ 		try
+		{
+		}
+		catch(Exception e)
+		{
+			for(int i = 0; i<4; i++)
+			{
+				Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+			}
+		}
+ */
+
+
+
+

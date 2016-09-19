@@ -97,6 +97,8 @@ public class ObjectiveListAdapter extends RecyclerView.Adapter<ObjectiveListAdap
 		// - get data from your itemsData at this position
 		// - replace the contents of the view with that itemsData
 		viewHolder.objective = objectives.get(position);
+		// Show number for each objective in list, Author: Alin;
+		viewHolder.objectiveNumber.setText(String.valueOf(position+1));
 		viewHolder.objectiveNameText.setText(objectives.get(position).getName());
 		viewHolder.objectivePhaseText.setText(objectives.get(position).getPhaseName());
 		viewHolder.objectiveExpPhaseText.setText(objectives.get(position).getExpPhaseDateString());
@@ -135,6 +137,8 @@ public class ObjectiveListAdapter extends RecyclerView.Adapter<ObjectiveListAdap
 		public Context context;
 		public ObjectiveClickInterface clickInterface;
 
+		
+		public TextView objectiveNumber; //Added TextView for objective number, Author: Alin
 		public TextView objectiveNameText;
 		public TextView objectivePhaseText;
 		public TextView objectiveExpPhaseText;
@@ -151,6 +155,7 @@ public class ObjectiveListAdapter extends RecyclerView.Adapter<ObjectiveListAdap
 
 			itemLayoutView.setOnClickListener(this);
 
+			objectiveNumber = (TextView) itemLayoutView.findViewById(R.id.textView_objective_number); //Added TextView for Objective number, Author: Alin
 			objectiveNameText = (TextView) itemLayoutView.findViewById(R.id.textView_objective_name);
 			objectivePhaseText = (TextView) itemLayoutView.findViewById(R.id.textView_objective_phase);
 			objectiveExpPhaseText = (TextView) itemLayoutView.findViewById(R.id.textView_objective_phaseExp);

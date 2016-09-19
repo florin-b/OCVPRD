@@ -22,6 +22,13 @@ public class Stage implements Parcelable {
         this.status = 0;
     }
 
+    public Stage(int id, String name, int hierarchy) {
+    	this.id = id;
+        this.name = name;
+        this.hierarchy = hierarchy;
+        this.status = 0;
+    }
+    
     public Stage(String name, int hierarchy, int status) {
         this(name, hierarchy);
         this.status = status;
@@ -109,3 +116,4 @@ public class Stage implements Parcelable {
 
 
 }
+

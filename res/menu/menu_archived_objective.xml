@@ -20,4 +20,12 @@
 	      </menu>
     </item>
     
+    <!-- Added "Dezarhiveaza", Author: Alin -->
+    <item android:id="@+id/action_unrar"
+          android:icon="@drawable/ic_archive_white_48dp"
+          android:title="@string/action_button_title_unrar"
+          app:showAsAction="always|withText" >
+	</item>
+    
 </menu>
+

@@ -15,6 +15,15 @@
         android:paddingBottom="4dp"
         android:paddingTop="4dp"
         android:weightSum="4" >
+	
+		<TextView
+            android:id="@+id/textView_objective_number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:gravity="start"
+            android:padding="4dp"
+            android:textAppearance="?android:textAppearanceMedium" />
 
         <TextView
             android:id="@+id/textView_objective_name"
@@ -29,7 +38,7 @@
             android:id="@+id/textView_objective_beneficiary"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.6"
+            android:layout_weight="0.5"
             android:gravity="start"
             android:padding="4dp"
             android:textAppearance="?android:textAppearanceMedium" />
@@ -56,7 +65,7 @@
             android:id="@+id/textView_objective_region"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.6"
+            android:layout_weight="0.5"
             android:gravity="start"
             android:padding="4dp"
             android:textAppearance="?android:textAppearanceMedium" />

@@ -41,6 +41,9 @@ public class OperatiiTabele implements AsyncTaskListener {
 			while (iterator.hasNext()) {
 				objective = iterator.next();
 
+				
+				
+				
 				jsonObj = new JSONObject();
 				jsonObj.put("id", objective.getId());
 				jsonObj.put("typeId", objective.getTypeId());

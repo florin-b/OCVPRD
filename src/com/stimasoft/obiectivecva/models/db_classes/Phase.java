@@ -25,7 +25,14 @@ public class Phase implements Parcelable {
 		this.stageId = 0;
 		this.status = 0;
 	}
-
+	
+	public Phase(int id, String name, int hierarchy) {
+    	this.id = id;
+        this.name = name;
+        this.hierarchy = hierarchy;
+        this.status = 0;
+    }
+	
 	public Phase(String name, int days, int hierarchy, int stageId) {
 		this(name, days, hierarchy);
 		this.stageId = stageId;
@@ -151,3 +158,4 @@ public class Phase implements Parcelable {
 	}
 
 }
+

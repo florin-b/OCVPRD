@@ -1,5 +1,20 @@
 package com.stimasoft.obiectivecva.utils;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+
+import com.arabesque.obiectivecva.UserInfo;
+import com.arabesque.obiectivecva.enums.EnumFiliale;
+import com.arabesque.obiectivecva.enums.EnumJudete;
+import com.arabesque.obiectivecva.enums.EnumStadiuObiectiv;
+import com.arabesque.obiectivecva.model.Agent;
+import com.stimasoft.obiectivecva.R;
+import com.stimasoft.obiectivecva.models.db_classes.Phase;
+import com.stimasoft.obiectivecva.models.db_classes.Stage;
+
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
@@ -10,20 +25,6 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.arabesque.obiectivecva.UserInfo;
-import com.arabesque.obiectivecva.enums.EnumFiliale;
-import com.arabesque.obiectivecva.enums.EnumJudete;
-import com.arabesque.obiectivecva.enums.EnumStadiuObiectiv;
-import com.arabesque.obiectivecva.model.Agent;
-import com.stimasoft.obiectivecva.R;
-import com.stimasoft.obiectivecva.models.db_classes.Region;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-
 /**
  * Utility class for filter generation
  */
@@ -31,7 +32,13 @@ public class FilterUtils {
 
 	private Context context;
 	private Activity activity;
-	
+
+
+	private int lastSelectedStageId = -1;
+	private int lastSelectedPhaseId = -1;
+
+	private boolean objectiveTypeChanged = false;
+
 	public static final String EQUALS = " = ";
 
 	public static final String GREATER_THAN = " > ";
@@ -65,7 +72,7 @@ public class FilterUtils {
 	 */
 	public HashMap<String, Pair<String, String>> generateFilterWhere() {
 		// TODO @Filip use this for filtering the map
-		HashMap<String, Pair<String, String>> whereArgs = new HashMap<String, Pair<String, String>>();
+		final HashMap<String, Pair<String, String>> whereArgs = new HashMap<String, Pair<String, String>>();
 
 		// filiala
 		Spinner spinnerFiliale = (Spinner) activity.findViewById(R.id.spinner_objective_filiala);
@@ -85,11 +92,26 @@ public class FilterUtils {
 			whereArgs.put(SQLiteHelper.FILIALA, new Pair<String, String>(EQUALS, "'" + UserInfo.getInstance().getUnitLog() + "'"));
 			whereArgs.put(SQLiteHelper.CVA_CODE, new Pair<String, String>(EQUALS, "'" + UserInfo.getInstance().getCod() + "'"));
 		}
-		
+
 		// status
 		Spinner spinnerStatusObiect = (Spinner) activity.findViewById(R.id.spinner_filter_status);
 		int objectiveStatusId = EnumStadiuObiectiv.getCodStadiu(spinnerStatusObiect.getSelectedItem().toString());
 		whereArgs.put(SQLiteHelper.STATUS_ID, new Pair<String, String>(EQUALS, String.valueOf(objectiveStatusId)));
+
+		// stage and phase objective, Author: Alin
+		  Spinner spinnerStageObject = (Spinner) activity.findViewById(R.id.spinner_filter_stage_objective);	
+		  Spinner spinnerPhaseObject = (Spinner) activity.findViewById(R.id.spinner_filter_phase_objective);
+		  lastSelectedStageId = ((Stage) spinnerStageObject.getSelectedItem()).getId();
+		  lastSelectedPhaseId = ((Phase) spinnerPhaseObject.getSelectedItem()).getId();
+		  if(lastSelectedStageId > 0 && lastSelectedPhaseId == 0)
+		  {
+			  whereArgs.put(SQLiteHelper.STAGE_ID, new Pair<String, String>(EQUALS, String.valueOf("'" + lastSelectedStageId + "'")));
+		  }
+		  else if(lastSelectedStageId > 0 && lastSelectedPhaseId > 0)
+		  {
+			  whereArgs.put(SQLiteHelper.PHASE_ID, new Pair<String, String>(EQUALS, String.valueOf("'" + lastSelectedPhaseId + "'")));
+		  }
+		  // end stage and phase objective
 
 		// Region filter
 		Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_filter_region);
@@ -165,51 +187,7 @@ public class FilterUtils {
 		default:
 			break;
 		}
-
-		// Make Authorization Date filter
-		TextView authDateStart = (TextView) activity.findViewById(R.id.filter_authDate_start);
-		TextView authDateEnd = (TextView) activity.findViewById(R.id.filter_authDate_end);
-
-		if (authDateStart.getText().length() > 0 && authDateEnd.getText().length() > 0) {
-			// Desired form: WHERE startDate BETWEEN 'date1' AND 'date2'
-			String argumentString = "'" + changeDateFormat(authDateStart.getText().toString(), FILTER_DATE_FORMAT, Constants.DB_DATE_FORMAT) + "'" + " AND "
-					+ "'" + changeDateFormat(authDateEnd.getText().toString(), FILTER_DATE_FORMAT, Constants.DB_DATE_FORMAT) + "'";
-
-			whereArgs.put(SQLiteHelper.AUTHORIZATION_START, new Pair<String, String>(BETWEEN, argumentString));
-		} else {
-			if (authDateStart.getText().length() > 0) {
-				String authDateStartString = "'" + changeDateFormat(authDateStart.getText().toString(), FILTER_DATE_FORMAT, Constants.DB_DATE_FORMAT) + "'";
-				whereArgs.put(SQLiteHelper.AUTHORIZATION_START, new Pair<String, String>(GEATER_OR_EQUAL, authDateStartString));
-			}
-
-			if (authDateEnd.getText().length() > 0) {
-				String authDateEndString = "'" + changeDateFormat(authDateEnd.getText().toString(), FILTER_DATE_FORMAT, Constants.DB_DATE_FORMAT) + "'";
-				whereArgs.put(SQLiteHelper.AUTHORIZATION_START, new Pair<String, String>(LESS_OR_EQUAL, authDateEndString));
-			}
-		}
-
-		// Make Authorization Exp Date filter
-		TextView authExpDateStart = (TextView) activity.findViewById(R.id.filter_authExpDate_start);
-		TextView authExpDateEnd = (TextView) activity.findViewById(R.id.filter_authExpDate_end);
-
-		if (authExpDateStart.getText().length() > 0 && authExpDateEnd.getText().length() > 0) {
-			// Desired form: WHERE startDate BETWEEN 'date1' AND 'date2'
-			String argumentString = "'" + changeDateFormat(authExpDateStart.getText().toString(), FILTER_DATE_FORMAT, Constants.DB_DATE_FORMAT) + "'" + " AND "
-					+ "'" + changeDateFormat(authExpDateEnd.getText().toString(), FILTER_DATE_FORMAT, Constants.DB_DATE_FORMAT) + "'";
-
-			whereArgs.put(SQLiteHelper.AUTHORIZATION_END, new Pair<String, String>(BETWEEN, argumentString));
-		} else {
-			if (authExpDateStart.getText().length() > 0) {
-				String authExpDateStartString = "'" + changeDateFormat(authExpDateStart.getText().toString(), FILTER_DATE_FORMAT, Constants.DB_DATE_FORMAT)
-						+ "'";
-				whereArgs.put(SQLiteHelper.AUTHORIZATION_END, new Pair<String, String>(GEATER_OR_EQUAL, authExpDateStartString));
-			}
-
-			if (authExpDateEnd.getText().length() > 0) {
-				String authExpDateEndString = "'" + changeDateFormat(authExpDateEnd.getText().toString(), FILTER_DATE_FORMAT, Constants.DB_DATE_FORMAT) + "'";
-				whereArgs.put(SQLiteHelper.AUTHORIZATION_END, new Pair<String, String>(LESS_OR_EQUAL, authExpDateEndString));
-			}
-		}
+		
 		// Make Estimated Value filter
 		EditText estValueStart = (EditText) activity.findViewById(R.id.filter_estValue_start);
 		EditText estValueEnd = (EditText) activity.findViewById(R.id.filter_estValue_end);
@@ -251,11 +229,13 @@ public class FilterUtils {
 		}
 
 		// Make CVA Code filter
-		//EditText cvaCode = (EditText) activity.findViewById(R.id.editText_filter_cvaCode);
+		// EditText cvaCode = (EditText)
+		// activity.findViewById(R.id.editText_filter_cvaCode);
 
-		//if (cvaCode.getText().length() > 0) {
-		//	whereArgs.put(SQLiteHelper.CVA_CODE, new Pair<String, String>(IN, "( " + cvaCode.getText().toString() + " )"));
-		//}
+		// if (cvaCode.getText().length() > 0) {
+		// whereArgs.put(SQLiteHelper.CVA_CODE, new Pair<String, String>(IN, "(
+		// " + cvaCode.getText().toString() + " )"));
+		// }
 
 		return whereArgs;
 	}
@@ -304,3 +284,53 @@ public class FilterUtils {
 	}
 
 }
+
+// Unused Code
+/*
+// Make Authorization Date filter
+TextView authDateStart = (TextView) activity.findViewById(R.id.filter_authDate_start);
+TextView authDateEnd = (TextView) activity.findViewById(R.id.filter_authDate_end);
+
+if (authDateStart.getText().length() > 0 && authDateEnd.getText().length() > 0) {
+	// Desired form: WHERE startDate BETWEEN 'date1' AND 'date2'
+	String argumentString = "'" + changeDateFormat(authDateStart.getText().toString(), FILTER_DATE_FORMAT, Constants.DB_DATE_FORMAT) + "'" + " AND "
+			+ "'" + changeDateFormat(authDateEnd.getText().toString(), FILTER_DATE_FORMAT, Constants.DB_DATE_FORMAT) + "'";
+
+	whereArgs.put(SQLiteHelper.AUTHORIZATION_START, new Pair<String, String>(BETWEEN, argumentString));
+} else {
+	if (authDateStart.getText().length() > 0) {
+		String authDateStartString = "'" + changeDateFormat(authDateStart.getText().toString(), FILTER_DATE_FORMAT, Constants.DB_DATE_FORMAT) + "'";
+		whereArgs.put(SQLiteHelper.AUTHORIZATION_START, new Pair<String, String>(GEATER_OR_EQUAL, authDateStartString));
+	}
+
+	if (authDateEnd.getText().length() > 0) {
+		String authDateEndString = "'" + changeDateFormat(authDateEnd.getText().toString(), FILTER_DATE_FORMAT, Constants.DB_DATE_FORMAT) + "'";
+		whereArgs.put(SQLiteHelper.AUTHORIZATION_START, new Pair<String, String>(LESS_OR_EQUAL, authDateEndString));
+	}
+}
+
+// Make Authorization Exp Date filter
+TextView authExpDateStart = (TextView) activity.findViewById(R.id.filter_authExpDate_start);
+TextView authExpDateEnd = (TextView) activity.findViewById(R.id.filter_authExpDate_end);
+
+if (authExpDateStart.getText().length() > 0 && authExpDateEnd.getText().length() > 0) {
+	// Desired form: WHERE startDate BETWEEN 'date1' AND 'date2'
+	String argumentString = "'" + changeDateFormat(authExpDateStart.getText().toString(), FILTER_DATE_FORMAT, Constants.DB_DATE_FORMAT) + "'" + " AND "
+			+ "'" + changeDateFormat(authExpDateEnd.getText().toString(), FILTER_DATE_FORMAT, Constants.DB_DATE_FORMAT) + "'";
+
+	whereArgs.put(SQLiteHelper.AUTHORIZATION_END, new Pair<String, String>(BETWEEN, argumentString));
+} else {
+	if (authExpDateStart.getText().length() > 0) {
+		String authExpDateStartString = "'" + changeDateFormat(authExpDateStart.getText().toString(), FILTER_DATE_FORMAT, Constants.DB_DATE_FORMAT)
+				+ "'";
+		whereArgs.put(SQLiteHelper.AUTHORIZATION_END, new Pair<String, String>(GEATER_OR_EQUAL, authExpDateStartString));
+	}
+
+	if (authExpDateEnd.getText().length() > 0) {
+		String authExpDateEndString = "'" + changeDateFormat(authExpDateEnd.getText().toString(), FILTER_DATE_FORMAT, Constants.DB_DATE_FORMAT) + "'";
+		whereArgs.put(SQLiteHelper.AUTHORIZATION_END, new Pair<String, String>(LESS_OR_EQUAL, authExpDateEndString));
+	}
+}
+*/
+
+

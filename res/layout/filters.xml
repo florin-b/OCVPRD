@@ -149,6 +149,8 @@
                     android:src="@drawable/ic_clear_black_48dp" />
             </LinearLayout>
 
+            <!-- Removed "Nume Obiectiv from Filtre"
+            	 Modified: Alin; -->
             <LinearLayout
                 android:id="@+id/layout_filter_name"
                 android:layout_width="wrap_content"
@@ -156,7 +158,8 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal"
-                android:padding="8dp" >
+                android:padding="8dp"
+                android:visibility="gone" >
 
                 <TextView
                     android:id="@+id/label_filter_name"
@@ -189,6 +192,7 @@
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_clear_black_48dp" />
             </LinearLayout>
+            <!-- End Remove -->
 
             <LinearLayout
                 android:id="@+id/layout_filter_city"
@@ -262,14 +266,17 @@
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_clear_black_48dp" />
             </LinearLayout>
-
+            
+			<!-- Removed "Interval Adaugare" from filters
+				 Modified: Alin -->
             <LinearLayout
                 android:id="@+id/layout_filter_dateAdded"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:orientation="horizontal"
-                android:padding="8dp" >
+                android:padding="8dp" 
+                android:visibility="gone" >
 
                 <TextView
                     android:id="@+id/label_filter_addDate"
@@ -328,7 +335,8 @@
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_clear_black_48dp" />
             </LinearLayout>
-
+			<!-- End Remove -->
+           
             <LinearLayout
                 android:id="@+id/layout_filter_region"
                 android:layout_width="match_parent"
@@ -404,13 +412,16 @@
                     android:src="@drawable/ic_clear_black_48dp" />
             </LinearLayout>
 
+            <!-- Removed "Tipul Beneficiarului" from Filtre
+            	 Modified: Alin; -->
             <LinearLayout
                 android:id="@+id/layout_filter_beneficiaryType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:orientation="horizontal"
-                android:padding="8dp" >
+                android:padding="8dp"
+                android:visibility="gone" >
 
                 <TextView
                     android:id="@+id/label_filter_beneficiaryType"
@@ -454,7 +465,8 @@
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_clear_black_48dp" />
             </LinearLayout>
-
+			<!-- End Remove -->
+            
             <LinearLayout
                 android:id="@+id/layout_juridicaDetails"
                 android:layout_width="match_parent"
@@ -819,6 +831,86 @@
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_clear_black_48dp" />
             </LinearLayout>
+
+            <!-- 11. se doreste sa se adauge filtre dupa: „faza obiectiv” si „etapa obiectiv” -->		
+            <!-- Added "Stage Objective" Filter
+            	 Added: Alin; -->
+            <LinearLayout
+                android:id="@+id/layout_filter_stage_objective"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:padding="8dp" >
+
+                <TextView
+                    android:id="@+id/label_filter_stage_objective"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/filters_label_stage_objective"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <Spinner
+                    android:id="@+id/spinner_filter_stage_objective"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="15" />
+
+                <ImageButton
+                    android:id="@+id/button_clearStageObj"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+            <!-- End Add -->
+            
+            <!-- Added "Phase Objective" Filter
+            	 Added: Alin -->
+            	 
+            	 <LinearLayout
+                android:id="@+id/layout_filter_phase_objective"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                android:padding="8dp" >
+
+                <TextView
+                    android:id="@+id/label_filter_phase_objective"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/filters_label_phase_objective"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <Spinner
+                    android:id="@+id/spinner_filter_phase_objective"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="15" />
+
+                <ImageButton
+                    android:id="@+id/button_clearPhaseObj"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+            	 
+           	<!-- End Add -->
+            <!-- End 11. se doreste sa se adauge filtre dupa: „faza obiectiv” si „etapa obiectiv” -->
         </LinearLayout>
     </ScrollView>
 

@@ -389,9 +389,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 			objective.setTelMeserias(cursorObjectives.getString(25));
 			// End Meserias fields Alin
 
-			objective.setTelBenef(cursorObjectives.getString(23));
+			objective.setTelBenef(cursorObjectives.getString(26));
 
-			objective.setFiliala(cursorObjectives.getString(24));
+			objective.setFiliala(cursorObjectives.getString(27));
 
 			objectives.add(objective);
 

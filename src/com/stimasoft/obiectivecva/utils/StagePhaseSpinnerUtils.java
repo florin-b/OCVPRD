@@ -54,6 +54,10 @@ public class StagePhaseSpinnerUtils {
 //        }
 
         stages = stageData.getAllStages(hierarchyLimit);
+        
+        //stage and phase spinners, Author: Alin
+        stages.add(0,new Stage(0,"Selectati stadiul",0));
+        
 
         StageSpinnerAdapter adapter = new StageSpinnerAdapter(context,
                 R.layout.spinner_dropdown_item,
@@ -89,7 +93,10 @@ public class StagePhaseSpinnerUtils {
         PhaseData phaseData = new PhaseData(context);
 
         ArrayList<Phase> phases = phaseData.getAvailabelePhasesForStage(objectiveId,selectedStage);
-
+        
+        //stages and phases spinner, Author: Alin
+        phases.add(0,new Phase(0,"Selectati faza",0));
+        
         PhaseSpinnerAdapter adapter = new PhaseSpinnerAdapter(context,
                 R.layout.spinner_dropdown_item,
                 phases);
@@ -143,3 +150,4 @@ public class StagePhaseSpinnerUtils {
         return index;
     }
 }
+

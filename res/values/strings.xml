@@ -26,6 +26,9 @@
     <string name="home_text_debug">Acest caz nu este prevăzut</string>
 
     <!-- Objectives -->
+   	<!-- Add Objective Number, Author: Alin -->
+   	<string name="table_header_number">Nr.</string>
+   	<!-- End Add -->
     <string name="table_header_name">Denumire</string>
     <string name="table_header_phase">Fază</string>
     <string name="table_header_beneficiary">Beneficiar</string>
@@ -85,6 +88,8 @@
     <!-- Add Edit Menu -->
     <string name="action_button_title_save">Salvează</string>
     <string name="action_button_title_archive">Arhivează</string>
+    <!-- Added "Dezarhiveaza String", Author: Alin -->
+    <string name="action_button_title_unrar">Dezarhivează</string>
     <string name="action_button_title_saveModifications">Salvează modificări</string>
 
     <!-- Objectives activity -->
@@ -163,7 +168,11 @@
     <string name="filters_interval_separator_numbers"><![CDATA[<]]></string>
     <string name="filters_interval_separator_dash">-</string>
     <string name="filters_label_cva_code">Cod CVA:</string>
-
+    <!-- Stage & Phase Objective Filters, Added: Alin; -->
+    <string name="filters_label_stage_objective">Etapa Obiectiv</string>
+    <string name="filters_label_phase_objective">Faza Obiectiv</string>
+	<!-- End Add -->
+    
     <!-- Nomenclatures -->
     <string name="nomenclatures_button_add_stage">Adaugă o etapă</string>
     <string name="nomenclatures_button_add_phase">Adaugă o fază</string>

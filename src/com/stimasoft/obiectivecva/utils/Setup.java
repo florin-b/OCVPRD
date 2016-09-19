@@ -893,6 +893,10 @@ public class Setup implements OperatiiAgentListener, AsyncTaskListener {
 		ImageButton clearEstValues = (ImageButton) activity.findViewById(R.id.button_clearEstValues);
 		ImageButton clearZip = (ImageButton) activity.findViewById(R.id.button_clearZip);
 		ImageButton clearCvaCodes = (ImageButton) activity.findViewById(R.id.button_clearCvaCodes);
+		//Add ClearStage and ClearPhase Button, Author: Alin;
+		ImageButton clearStageButton = (ImageButton) activity.findViewById(R.id.button_clearStageObj);
+		ImageButton clearPhaseButton = (ImageButton) activity.findViewById(R.id.button_clearPhaseObj);
+		//End Add
 
 		clearFiliala.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -951,6 +955,26 @@ public class Setup implements OperatiiAgentListener, AsyncTaskListener {
 				regionSpinner.setSelection(0);
 			}
 		});
+		
+		//Add Clear Click Function for Stage and Phase Spinner, Author: Alin
+		clearStageButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Spinner stageSpinner = (Spinner) activity.findViewById(R.id.spinner_filter_stage_objective);
+				Spinner phaseSpinner = (Spinner) activity.findViewById(R.id.spinner_filter_phase_objective);
+				stageSpinner.setSelection(0);
+				phaseSpinner.setSelection(0);
+			}
+		});
+		
+		clearPhaseButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Spinner phaseSpinner = (Spinner) activity.findViewById(R.id.spinner_filter_phase_objective);
+				phaseSpinner.setSelection(0);
+			}
+		});
+		//End Add
 
 		clearBeneficiary.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -1045,6 +1069,10 @@ public class Setup implements OperatiiAgentListener, AsyncTaskListener {
 		AutoCompleteTextView projectNameText = (AutoCompleteTextView) activity.findViewById(R.id.autoComplete_filter_name);
 		TextView addDateStartText = (TextView) activity.findViewById(R.id.filter_dateAdded_start);
 		TextView addDateEndText = (TextView) activity.findViewById(R.id.filter_dateAdded_end);
+		//Add stage and phase Spinner to clear filters, Author: Alin;
+		Spinner spinnerStageObj = (Spinner) activity.findViewById(R.id.spinner_filter_stage_objective);
+		Spinner spinnerPhaseObj = (Spinner) activity.findViewById(R.id.spinner_filter_phase_objective);
+		//End Add			
 		Spinner regionSpinner = (Spinner) activity.findViewById(R.id.spinner_filter_region);
 		AutoCompleteTextView beneficiaryName = (AutoCompleteTextView) activity.findViewById(R.id.autoComplete_filter_beneficiary);
 		RadioGroup beneficiaryTypeGroup = (RadioGroup) activity.findViewById(R.id.radioGroup_filter_beneficiaryType);
@@ -1064,7 +1092,7 @@ public class Setup implements OperatiiAgentListener, AsyncTaskListener {
 		spinnerFiliale = (Spinner) activity.findViewById(R.id.spinner_objective_filiala);
 		spinnerConsilieri = (Spinner) activity.findViewById(R.id.spinner_objective_consilier);
 		spinnerStatusObiect = (Spinner) activity.findViewById(R.id.spinner_filter_status);
-
+				
 		spinnerFiliale.setSelection(0);
 		spinnerConsilieri.setSelection(0);
 		spinnerStatusObiect.setSelection(0);
@@ -1073,6 +1101,10 @@ public class Setup implements OperatiiAgentListener, AsyncTaskListener {
 		addDateStartText.setText("");
 		addDateEndText.setText("");
 		regionSpinner.setSelection(0);
+		//Stage and Phase selection, Author: Alin;
+		spinnerStageObj.setSelection(0);
+		spinnerPhaseObj.setSelection(0);
+		//End Add
 		beneficiaryName.setText("");
 		beneficiaryTypeGroup.clearCheck();
 		cuiText.setText("");
@@ -1180,3 +1212,4 @@ public class Setup implements OperatiiAgentListener, AsyncTaskListener {
 
 	}
 }
+

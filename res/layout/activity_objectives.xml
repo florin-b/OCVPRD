@@ -38,7 +38,22 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:weightSum="4" >
-
+				<!-- Added Objective Numbers TextView field, Author: Alin, -->
+                        <TextView
+                            android:id="@+id/textView_objectives_Number"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="0.2"
+                            android:background="@drawable/background_selector"
+                            android:clickable="true"
+                            android:gravity="start|center_vertical"
+                            android:minLines="2"
+                            android:text="@string/table_header_number"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@android:color/white" />
+               <!-- End Add -->
+                                                
                         <TextView
                             android:id="@+id/textView_objectivesHeader_name"
                             android:layout_width="0dp"
@@ -53,11 +68,13 @@
                             android:textAppearance="?android:textAppearanceMedium"
                             android:textColor="@android:color/white" />
 
+
                         <TextView
+                            android:id="@+id/textView_objectivesBeneficiary_name"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:layout_weight="0.6"
+                            android:layout_weight="0.5"
                             android:background="@drawable/background_selector"
                             android:gravity="start|center_vertical"
                             android:minLines="2"
@@ -66,6 +83,7 @@
                             android:textColor="@android:color/white" />
 
                         <TextView
+                            android:id="@+id/textView_objectivesConstructor_name"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -78,6 +96,7 @@
                             android:textColor="@android:color/white" />
 
                         <TextView
+                            android:id="@+id/textView_objectivesAddress_detail"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
@@ -90,10 +109,11 @@
                             android:textColor="@android:color/white" />
 
                         <TextView
+                            android:id="@+id/textView_objectivesCity_name"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:layout_weight="0.6"
+                            android:layout_weight="0.5"
                             android:background="@drawable/background_selector"
                             android:gravity="start|center_vertical"
                             android:minLines="2"
@@ -102,6 +122,7 @@
                             android:textColor="@android:color/white" />
 
                         <TextView
+                            android:id="@+id/textView_objectivesPhase_detail"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
