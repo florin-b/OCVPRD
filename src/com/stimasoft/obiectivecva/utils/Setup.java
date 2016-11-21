@@ -881,6 +881,11 @@ public class Setup implements OperatiiAgentListener, AsyncTaskListener {
 		ImageButton clearStatus = (ImageButton) activity.findViewById(R.id.button_clearStatus);
 
 		ImageButton clearName = (ImageButton) activity.findViewById(R.id.button_clearName);
+		
+		//Added ImageButton to clear Obj Number EditText, Author: Alin;
+		ImageButton clearNumber = (ImageButton) activity.findViewById(R.id.button_clearNumber);
+		//End Add
+		
 		ImageButton clearCity = (ImageButton) activity.findViewById(R.id.button_clearCity);
 		ImageButton clearAddDates = (ImageButton) activity.findViewById(R.id.button_clearAddDates);
 		ImageButton clearRegions = (ImageButton) activity.findViewById(R.id.button_clearRegions);
@@ -927,6 +932,17 @@ public class Setup implements OperatiiAgentListener, AsyncTaskListener {
 				acTextViewName.setText("");
 			}
 		});
+		
+		//Setting clearNumber Button, Author: Alin;
+		clearNumber.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				EditText objNumber = (EditText) activity.findViewById(R.id.editText_filter_number);
+				objNumber.setText("");
+			}
+		});
+		//End Setting clearNumber
 
 		clearCity.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -1068,7 +1084,7 @@ public class Setup implements OperatiiAgentListener, AsyncTaskListener {
 	public void clearFilters() {
 		AutoCompleteTextView projectNameText = (AutoCompleteTextView) activity.findViewById(R.id.autoComplete_filter_name);
 		TextView addDateStartText = (TextView) activity.findViewById(R.id.filter_dateAdded_start);
-		TextView addDateEndText = (TextView) activity.findViewById(R.id.filter_dateAdded_end);
+		TextView addDateEndText = (TextView) activity.findViewById(R.id.filter_dateAdded_end);		
 		//Add stage and phase Spinner to clear filters, Author: Alin;
 		Spinner spinnerStageObj = (Spinner) activity.findViewById(R.id.spinner_filter_stage_objective);
 		Spinner spinnerPhaseObj = (Spinner) activity.findViewById(R.id.spinner_filter_phase_objective);
@@ -1088,7 +1104,9 @@ public class Setup implements OperatiiAgentListener, AsyncTaskListener {
 		EditText cvaCodesText = (EditText) activity.findViewById(R.id.editText_filter_cvaCode);
 
 		EditText textCity = (EditText) activity.findViewById(R.id.editText_filter_city);
-
+		//EditText for Objective Number to clear all filters, Author: Alin
+		EditText objNumber = (EditText) activity.findViewById(R.id.editText_filter_number);
+		//End EditText
 		spinnerFiliale = (Spinner) activity.findViewById(R.id.spinner_objective_filiala);
 		spinnerConsilieri = (Spinner) activity.findViewById(R.id.spinner_objective_consilier);
 		spinnerStatusObiect = (Spinner) activity.findViewById(R.id.spinner_filter_status);
@@ -1117,6 +1135,7 @@ public class Setup implements OperatiiAgentListener, AsyncTaskListener {
 		estValueEnd.setText("");
 		zipCodeText.setText("");
 		cvaCodesText.setText("");
+		objNumber.setText(""); // Objective Number, Author: Alin;
 		textCity.setText("");
 	}
 
@@ -1212,4 +1231,3 @@ public class Setup implements OperatiiAgentListener, AsyncTaskListener {
 
 	}
 }
-

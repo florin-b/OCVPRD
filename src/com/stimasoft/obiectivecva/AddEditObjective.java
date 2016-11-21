@@ -167,7 +167,16 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 						intent.getExtras().getString(Constants.CVA_CODE));
 				Log.d("DBG", "Intrat in modul de editare din lista");
 				purpose = EDIT;
+				try{
 				setupEditUi(objectiveToEdit);
+				}
+				catch(Exception e)
+				{
+					for(int i=0; i<2; i++)
+					{
+					Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+					}
+				}
 			} else {
 				Log.d("DBG", "Intrat in modul de adaugare cu coordonate");
 				purpose = ADD;
@@ -235,11 +244,12 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 			break;
 
 		case R.id.action_save:
-			try {
-				saveNewObjective();
-			} catch (Exception e) {
-				Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
-			}
+			//try {
+			saveNewObjective();
+					        
+			//} catch (Exception e) {
+				//Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+			//}
 			break;
 
 		case R.id.action_saveModifications:
@@ -443,13 +453,13 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 				&& editText_objective_execName.getText().toString().trim().equals("")) {
 			editText_objective_execName.setError(getString(R.string.error_incorrect_completion));
 			thereAreErrors = true;
-		}
+		}/*
 		else if(executantSpinner.getSelectedItem().toString().equals(EnumTipExecutant.REGIE_PROPRIE.getNume())
 				&& editText_objective_meserName.getText().toString().trim().equals(""))
 		{
 			editText_objective_meserName.setError(getString(R.string.error_incorrect_completion));
 			thereAreErrors = true;
-		}
+		} */
 		//End Add
 		
 		// Handle name
@@ -586,6 +596,13 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 		// Get duration in days
 		int days = Integer.parseInt(phaseDuration.getText().toString());
+		//Added error in case number is negative, Author: Alin
+		if(days < 0)
+		{
+			phaseDuration.setError(getString(R.string.error_incorrect_completion));
+			thereAreErrors = true;
+		}
+		//End Add
 
 		// Get coordinates
 		String coordinates = "";
@@ -670,8 +687,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 							boolean benefAddErrors = false;
 
 							if (beneficiaryType == Beneficiary.TYPE_INDIVIDUAL) {
-								Beneficiary beneficiaryToAdd = new Beneficiary(regionId, beneficiaryNameString,
-										beneficiaryType);
+								Beneficiary beneficiaryToAdd = new Beneficiary(regionId, beneficiaryNameString, beneficiaryType);
 
 								beneficiaryData.addBeneficiary(beneficiaryToAdd);
 							} else if (beneficiaryType == Beneficiary.TYPE_LEGAL) {
@@ -684,21 +700,19 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 								if (cuiText.getText().length() > 0) {
 									cuiTextString = cuiText.getText().toString();
 								} else {
-									cuiText.setError(
-											getApplicationContext().getString(R.string.error_incorrect_completion));
+									cuiText.setError(getApplicationContext().getString(R.string.error_incorrect_completion));
 									benefAddErrors = true;
 								}
 								if (nrRcText.getText().length() > 0) {
 									nrRcTextString = nrRcText.getText().toString();
 								} else {
-									nrRcText.setError(
-											getApplicationContext().getString(R.string.error_incorrect_completion));
+									nrRcText.setError(getApplicationContext().getString(R.string.error_incorrect_completion));
 									benefAddErrors = true;
 								}
 
 								if (!benefAddErrors) {
-									Beneficiary beneficiaryToAdd = new Beneficiary(regionId, beneficiaryNameString,
-											beneficiaryType, cuiTextString, nrRcTextString);
+									Beneficiary beneficiaryToAdd = new Beneficiary(regionId, beneficiaryNameString, beneficiaryType, cuiTextString,
+											nrRcTextString);
 
 									Beneficiary addedBeneficiary = beneficiaryData.addBeneficiary(beneficiaryToAdd);
 									if (addedBeneficiary != null)
@@ -707,8 +721,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 									createObjectiveFromForm();
 								} else {
 									benefErrors[0] = true;
-									Toast.makeText(getApplicationContext(),
-											getApplicationContext().getString(R.string.error_beneficiary_not_added),
+									Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.error_beneficiary_not_added),
 											Toast.LENGTH_SHORT).show();
 								}
 							}
@@ -729,7 +742,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 				builder.setPositiveButton(getString(R.string.beneficiary_add_button_positive), dialogClickListener);
 				builder.setNegativeButton(getString(R.string.beneficiary_add_button_negative), dialogClickListener);
 				builder.show();
-			}
+			} //End else
 		}
 		if (!thereAreErrors && !benefErrors[0]) {
 			List<Object> resultList = new ArrayList<Object>();
@@ -775,7 +788,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 				objective = new Objective(objectiveToEdit.getId(), objectiveType, cvaCode, regionId, name,
 						creationCalendar, beneficiaryId[0], beneficiaryType, authorizationCalendar,
 						authorizationEndCalendar, estimatedValue, address, -1, coordinates, stageId, phaseId,
-						phaseStartCalendarEdited, 1);
+						phaseEndCalendarEdited, 1);
 
 				objective.setPhaseValues(sBuilder.toString());
 
@@ -1932,11 +1945,10 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		phaseEnd.setOnClickListener(phaseEndClickListener);
 		
 		
-		
 		// Setup phase duration 
 		EditText editTextPhaseDuration = (EditText) findViewById(R.id.editText_objective_phaseDuration);
 		editTextPhaseDuration.setText(Integer.toString(currentPhaseDuration));
-		
+	
 
 		editTextPhaseDuration.addTextChangedListener(
 				new PhaseDurationChangeWatcher(this, phaseEndClickListener, textViewPhaseStart, textViewPhaseEnd));
@@ -2186,6 +2198,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		EditText days = (EditText) findViewById(R.id.editText_objective_phaseDuration);
 		int daysInt = Integer.parseInt(days.getText().toString());
 		dateToChange.setText(sdf.format(limit.getTime()));
+		
 
 		// Update date limits based on limitTarget
 		switch (limitTarget) {
@@ -2369,7 +2382,6 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 	 * Setup method for defining the behavior of the map fragment
 	 */
 	
-//returnhereTAB2	
 	
 	private void setupMapFunctionality() {
 		// SET UP Google Map
@@ -2844,7 +2856,6 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 			}
 		}
  */
-
 
 
 

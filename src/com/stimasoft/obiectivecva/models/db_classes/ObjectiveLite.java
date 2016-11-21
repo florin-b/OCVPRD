@@ -1,9 +1,9 @@
 package com.stimasoft.obiectivecva.models.db_classes;
 
-import android.util.Log;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import android.util.Log;
 
 /**
  * Lightweight version of the Objective class, used for listings.
@@ -58,7 +58,7 @@ public class ObjectiveLite {
 	}
 
 	public String getName() {
-		return name;
+		return name.substring(0,1).toUpperCase()+name.substring(1);
 	}
 
 	public void setName(String name) {
@@ -110,7 +110,7 @@ public class ObjectiveLite {
 	}
 
 	public String getConstructorName() {
-		return constructorName;
+		return constructorName.substring(0,1).toUpperCase()+constructorName.substring(1).toLowerCase();
 	}
 
 	public void setConstructorName(String constructorName) {

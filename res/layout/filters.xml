@@ -194,6 +194,46 @@
             </LinearLayout>
             <!-- End Remove -->
 
+			<!-- Added Objective Number TextView, Author: Alin; -->
+			<LinearLayout
+                android:id="@+id/layout_filter_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:padding="8dp" >
+
+                <TextView
+                    android:id="@+id/label_filter_number"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/objective_details_label_objective_number"
+                    android:textAppearance="?android:textAppearanceMedium" />
+
+                <EditText
+                    android:id="@+id/editText_filter_number"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:completionThreshold="3"
+                    android:ems="15"
+                    android:nextFocusLeft="@null"
+                    android:singleLine="true" />
+
+                <ImageButton
+                    android:id="@+id/button_clearNumber"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/background_selector"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black_48dp" />
+            </LinearLayout>
+            <!-- End Add -->
+
             <LinearLayout
                 android:id="@+id/layout_filter_city"
                 android:layout_width="wrap_content"

@@ -1,26 +1,5 @@
 package com.stimasoft.obiectivecva.models.db_utilities;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.text.format.DateUtils;
-import android.util.Log;
-import android.util.Pair;
-import android.widget.Toast;
-
-import com.arabesque.obiectivecva.UserInfo;
-import com.arabesque.obiectivecva.model.OperatiiTabele;
-import com.arabesque.obiectivecva.utils.Utils;
-import com.stimasoft.obiectivecva.R;
-import com.stimasoft.obiectivecva.models.db_classes.Objective;
-import com.stimasoft.obiectivecva.models.db_classes.ObjectiveLite;
-import com.stimasoft.obiectivecva.utils.Constants;
-import com.stimasoft.obiectivecva.utils.SQLiteHelper;
-import com.stimasoft.obiectivecva.utils.maps.ObjectiveItem;
-
-import org.json.JSONObject;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +9,28 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.json.JSONObject;
+
+import com.arabesque.obiectivecva.UserInfo;
+import com.arabesque.obiectivecva.model.OperatiiTabele;
+import com.arabesque.obiectivecva.utils.Utils;
+import com.stimasoft.obiectivecva.R;
+import com.stimasoft.obiectivecva.models.db_classes.Objective;
+import com.stimasoft.obiectivecva.models.db_classes.ObjectiveLite;
+import com.stimasoft.obiectivecva.models.db_classes.Phase;
+import com.stimasoft.obiectivecva.utils.Constants;
+import com.stimasoft.obiectivecva.utils.SQLiteHelper;
+import com.stimasoft.obiectivecva.utils.maps.ObjectiveItem;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.text.format.DateUtils;
+import android.util.Log;
+import android.util.Pair;
+import android.widget.Toast;
 
 /**
  * Convenience class for handling objective database operations
@@ -41,6 +42,7 @@ public class ObjectiveData {
 	private Context context;
 
 	private static final int QUERY_LIMIT = 400;
+	private Phase phase;
 
 	public ObjectiveData(Context cntxt) {
 		context = cntxt;
@@ -584,8 +586,16 @@ public class ObjectiveData {
 
 		String query = "SELECT pov." + SQLiteHelper.PHASE_START + ", pov." + SQLiteHelper.PHASE_END + " FROM "
 				+ SQLiteHelper.TABLE_PHASE_OBJ_VALUES + " pov" + " WHERE pov." + SQLiteHelper.OBJECTIVE_ID + " = "
-				+ Integer.toString(objId) + " AND pov." + SQLiteHelper.PHASE_ID + " = " + Integer.toString(phaseId);
-
+ 				+ Integer.toString(objId) + " AND pov." + SQLiteHelper.PHASE_ID + " = " + Integer.toString(phaseId);
+		
+		
+		// Created another query, which sets the start date
+		// and End Date to the Same Date, in order to fix
+		// older errors where the phase_id does not match anymore
+		// Author, Alin
+		String query2 = "SELECT o." + SQLiteHelper.EXPIRATION_PHASE + " FROM " + SQLiteHelper.TABLE_OBJECTIVES + " o"
+				+ " WHERE o." + SQLiteHelper.ID + " = " + Integer.toString(objId);
+		//End Add
 		Cursor cursor = db.rawQuery(query, null);
 
 		cursor.moveToFirst();
@@ -618,7 +628,37 @@ public class ObjectiveData {
 			return resultPair;
 		}
 
-		return null;
+		// Set Default Expiration Phase and Start Phase, Author: Alin;
+		Cursor cursor2 = db.rawQuery(query2, null);
+		cursor2.moveToLast();
+		
+			Calendar startDateCalendar = new GregorianCalendar();
+			Calendar endDateCalendar = new GregorianCalendar();
+			
+			try {
+				endDateCalendar.setTime(sdf.parse(cursor2.getString(0)));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			try {
+				startDateCalendar.setTime(sdf.parse(cursor2.getString(0)));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			Pair<Calendar, Calendar> resultPair = new Pair<Calendar, Calendar>(startDateCalendar, endDateCalendar);
+
+			cursor2.close();
+			db.close();
+
+			return resultPair;		
+		// End Set
+		
+		//return null;
 	}
 
 	/**
@@ -649,7 +689,7 @@ public class ObjectiveData {
 			return result;
 		}
 
-		return -1;
+		return 0;
 	}
 
 	/**
@@ -1230,4 +1270,3 @@ public class ObjectiveData {
 		return results;
 	}
 }
-

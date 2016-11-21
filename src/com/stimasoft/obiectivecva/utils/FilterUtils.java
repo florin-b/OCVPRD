@@ -1,10 +1,13 @@
 package com.stimasoft.obiectivecva.utils;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import com.arabesque.obiectivecva.UserInfo;
 import com.arabesque.obiectivecva.enums.EnumFiliale;
@@ -102,15 +105,21 @@ public class FilterUtils {
 		  Spinner spinnerStageObject = (Spinner) activity.findViewById(R.id.spinner_filter_stage_objective);	
 		  Spinner spinnerPhaseObject = (Spinner) activity.findViewById(R.id.spinner_filter_phase_objective);
 		  lastSelectedStageId = ((Stage) spinnerStageObject.getSelectedItem()).getId();
-		  lastSelectedPhaseId = ((Phase) spinnerPhaseObject.getSelectedItem()).getId();
-		  if(lastSelectedStageId > 0 && lastSelectedPhaseId == 0)
+		  if(lastSelectedStageId == 0)
 		  {
+			  whereArgs.put(SQLiteHelper.STAGE_ID, new Pair<String, String>(GREATER_THAN, String.valueOf("'" + lastSelectedStageId + "'")));
+		  }
+		  else if(lastSelectedStageId > 0)
+		  {
+			  
 			  whereArgs.put(SQLiteHelper.STAGE_ID, new Pair<String, String>(EQUALS, String.valueOf("'" + lastSelectedStageId + "'")));
+			  lastSelectedPhaseId = ((Phase) spinnerPhaseObject.getSelectedItem()).getId();
+			  if(lastSelectedPhaseId > 0)
+			  {
+				  whereArgs.put(SQLiteHelper.PHASE_ID, new Pair<String, String>(EQUALS, String.valueOf("'" + lastSelectedPhaseId + "'")));
+			  }
 		  }
-		  else if(lastSelectedStageId > 0 && lastSelectedPhaseId > 0)
-		  {
-			  whereArgs.put(SQLiteHelper.PHASE_ID, new Pair<String, String>(EQUALS, String.valueOf("'" + lastSelectedPhaseId + "'")));
-		  }
+		 
 		  // end stage and phase objective
 
 		// Region filter
@@ -127,6 +136,14 @@ public class FilterUtils {
 			whereArgs.put(SQLiteHelper.NAME, new Pair<String, String>(LIKE, "'%" + nameText.getText().toString().trim() + "%'"));
 		}
 
+		// Number filter, Author: Alin
+		EditText objNumber = (EditText) activity.findViewById(R.id.editText_filter_number);
+		if(objNumber.getText().length() > 0)
+		{
+			whereArgs.put(SQLiteHelper.ID, new Pair<String,String>(EQUALS, "" + objNumber.getText().toString().trim() + ""));
+		}
+		//End Filter
+		
 		// City filter
 		EditText cityText = (EditText) activity.findViewById(R.id.editText_filter_city);
 		if (cityText.getText().toString().trim().length() > 0) {
@@ -200,6 +217,11 @@ public class FilterUtils {
 			float valueLeft = Float.parseFloat(estValueStart.getText().toString());
 			float valueRight = Float.parseFloat(estValueEnd.getText().toString());
 
+			/*
+			DecimalFormat formatter = new DecimalFormat("#,###.##",	DecimalFormatSymbols.getInstance(Locale.US));
+			estValueStart.setText(formatter.format(valueLeft));
+			estValueEnd.setText(formatter.format(valueRight));
+			*/
 			String argumentString;
 
 			if (valueLeft < valueRight) {
@@ -332,5 +354,4 @@ if (authExpDateStart.getText().length() > 0 && authExpDateEnd.getText().length()
 	}
 }
 */
-
 

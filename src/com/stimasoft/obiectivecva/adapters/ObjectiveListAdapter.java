@@ -120,6 +120,10 @@ public class ObjectiveListAdapter extends RecyclerView.Adapter<ObjectiveListAdap
 
 	}
 
+	public void setObjectives(ArrayList<ObjectiveLite> objectives) {
+		this.objectives = objectives;
+	}
+	
 	private String getLocalitate(String adresa) {
 		if (adresa.contains(",")) {
 			return adresa.split(",")[0];

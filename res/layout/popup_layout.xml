@@ -6,8 +6,8 @@
     android:weightSum="1"
     android:padding="1dp"
     android:layout_weight="@integer/abc_config_activityDefaultDur"
-    android:minWidth="300dip">
-
+    android:minWidth="300dip">    
+    
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
@@ -33,6 +33,35 @@
 
             />
     </LinearLayout>
+    
+    <!-- Objective Number, Author: Alin -->
+       <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:padding="2dp">
+
+        <TextView
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/lbl_number"
+            android:id="@+id/lblNumber"
+
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text=""
+            android:id="@+id/txtNumber"
+            android:layout_gravity="bottom" />
+    </LinearLayout>
+    <!-- End Objective Number -->
+    
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"

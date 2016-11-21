@@ -111,6 +111,10 @@
     <string name="objective_details_label_add_date">Data adăugării</string>
     <string name="objective_details_hint_pickDate">Alegeti o data</string>
     <string name="objective_details_label_objective_name">Nume Obiectiv</string>
+    <!-- Number -->
+    <string name="lbl_number">Id</string>
+    <!-- End Number -->
+    <string name="objective_details_label_objective_number">Numar Obiectiv</string>
     <string name="objective_details_label_objective_city">Localitate</string>
     <string name="objective_details_label_objective_filiala">Filiala</string>
     <string name="objective_details_label_objective_consilier">Agent</string>

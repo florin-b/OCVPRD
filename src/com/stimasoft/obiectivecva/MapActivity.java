@@ -1,26 +1,16 @@
 package com.stimasoft.obiectivecva;
 
-import android.app.FragmentManager;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.util.Pair;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+
+import org.json.JSONException;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,6 +27,7 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.stimasoft.obiectivecva.adapters.RegionSpinnerAdapter;
 import com.stimasoft.obiectivecva.models.db_classes.Objective;
 import com.stimasoft.obiectivecva.models.db_classes.Region;
+import com.stimasoft.obiectivecva.models.db_classes.Stage;
 import com.stimasoft.obiectivecva.models.db_classes.User;
 import com.stimasoft.obiectivecva.models.db_utilities.RegionData;
 import com.stimasoft.obiectivecva.utils.Constants;
@@ -44,6 +35,7 @@ import com.stimasoft.obiectivecva.utils.FilterUtils;
 import com.stimasoft.obiectivecva.utils.SQLiteHelper;
 import com.stimasoft.obiectivecva.utils.Setup;
 import com.stimasoft.obiectivecva.utils.SharedPrefHelper;
+import com.stimasoft.obiectivecva.utils.StagePhaseSpinnerUtils;
 import com.stimasoft.obiectivecva.utils.maps.ObjectDialog;
 import com.stimasoft.obiectivecva.utils.maps.ObjectInfoWindowDialog;
 import com.stimasoft.obiectivecva.utils.maps.ObjectiveClusterRenderer;
@@ -51,17 +43,28 @@ import com.stimasoft.obiectivecva.utils.maps.ObjectiveItem;
 import com.stimasoft.obiectivecva.utils.maps.ObjectivesItemReader;
 import com.stimasoft.obiectivecva.utils.ui.DatePickerDialogFragment;
 
-import org.json.JSONException;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
+import android.app.FragmentManager;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.util.Pair;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 
 //implements GoogleMap.OnMarkerClickListener
@@ -78,6 +81,11 @@ public class MapActivity extends AppCompatActivity implements ObjectDialog.Commu
     private final LatLng LOCATION_ILFOV = new LatLng(44.491659, 26.1391725);
     private final LatLng LOCATION_ROMANIA = new LatLng(45.9419466, 25.0094284);
 
+ // stage and phase filter, Author: Alin
+ 	private int lastSelectedStageId = -1;
+ // stage and phase filter, Author: Alin
+ 	private boolean objectiveTypeChanged = false;
+    
     LinearLayout filters;
 
     HashMap<String, Marker> lastOpenedMarkers = new HashMap<String, Marker>();
@@ -154,6 +162,47 @@ public class MapActivity extends AppCompatActivity implements ObjectDialog.Commu
         setup.setupDrawerMenu(navView, drawerLayoutLeft, R.id.drawer_menu_obiective);
         filters = (LinearLayout) findViewById(R.id.layout_filters);
 
+     // stage and phase objective, Author: Alin
+
+     		final Spinner spinnerStageObject = (Spinner) findViewById(R.id.spinner_filter_stage_objective);
+     		final Spinner spinnerPhaseObject = (Spinner) findViewById(R.id.spinner_filter_phase_objective);
+
+     		final StagePhaseSpinnerUtils spsUtils = new StagePhaseSpinnerUtils(this);
+
+     		spsUtils.populateAvailableStagesSpinner(spinnerStageObject, -1, 0, spinnerStageObject.getSelectedItemPosition());
+     		lastSelectedStageId = ((Stage) spinnerStageObject.getSelectedItem()).getId();
+
+     		spinnerStageObject.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+     			@Override
+     			public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+     				// TODO Auto-generated method stub
+     				int selectedStageId = ((Stage) adapterView.getSelectedItem()).getId();
+     				int selectedPhasePosition = spinnerPhaseObject.getSelectedItemPosition();
+
+     				if (selectedStageId != lastSelectedStageId || objectiveTypeChanged) {
+     					spsUtils.populateAvailablePhasesSpinner(spinnerPhaseObject, -1, selectedStageId);
+
+     					if (selectedStageId == lastSelectedStageId) {
+     						spinnerPhaseObject.setSelection(selectedPhasePosition);
+     					}
+     					lastSelectedStageId = selectedStageId;
+     					objectiveTypeChanged = false;
+     				}
+
+     			}
+
+     			@Override
+     			public void onNothingSelected(AdapterView<?> adapterView) {
+     				// TODO Auto-generated method stub
+
+     			}
+
+     		});
+
+     		// end stage and phase objective
+        
+        
         ImageButton hideFilters = (ImageButton) findViewById(R.id.button_hideFilters);
         hideFilters.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -363,6 +412,16 @@ public class MapActivity extends AppCompatActivity implements ObjectDialog.Commu
 
 
                     JsonElement snippet = new JsonParser().parse(marker.getSnippet());
+                    
+                    // Set information for Objective Number, Author: Alin
+                    if (snippet.getAsJsonObject().get("id") != null)
+                    {
+                    	String idVal = snippet.getAsJsonObject().get("id").getAsString();
+                    	TextView idNo = (TextView) v.findViewById(R.id.txtNumber);
+                    	idNo.setText(idVal);
+                    }
+                    // End Objective Number
+                    
                     // Set information for Stage
                     if (snippet.getAsJsonObject().get("stage") != null) {
                         String stageVal = snippet.getAsJsonObject().get("stage").getAsString();
@@ -485,8 +544,8 @@ public class MapActivity extends AppCompatActivity implements ObjectDialog.Commu
 
                     ObjDialogInfoWindow.show(manager, "NewObjectiveInfoWindow");
 
-                    infoWindowMarker = marker;    // set current Marker for details regardin Objective
-                    marker.hideInfoWindow();    // hide Info Window of the current merker
+                    infoWindowMarker = marker;    // set current Marker for details regarding Objective
+                    marker.hideInfoWindow();    // hide Info Window of the current marker
                 }
             });
         }
@@ -569,7 +628,7 @@ public class MapActivity extends AppCompatActivity implements ObjectDialog.Commu
                 map_filter_params.put(SQLiteHelper.CVA_CODE, new Pair<String, String>("=", "'" + user.getCode() + "'"));
                 break;
             case User.TYPE_DVA:
-                // TODO - @Andrei - crem funtie pentru DVA care returneaza codurile CVA-ului din subordine
+                // TODO - @Andrei - creem functie pentru DVA ce returneaza codurile CVA-ului din subordine
                 //map_filter_params.put(SQLiteHelper.CVA_CODE, new Pair<>(" IN ", "('65987423', '65987423', '31687457', '98756329', '45654789', '30215982', '63026987', '63026987', '98652369')"));
             case User.TYPE_DIRECTOR:
                 //
