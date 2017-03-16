@@ -117,7 +117,7 @@
     <string name="objective_details_label_objective_number">Numar Obiectiv</string>
     <string name="objective_details_label_objective_city">Localitate</string>
     <string name="objective_details_label_objective_filiala">Filiala</string>
-    <string name="objective_details_label_objective_consilier">Agent</string>
+    <string name="objective_details_label_objective_consilier">Agentul</string>
     <string name="objective_details_label_objective_value">Valoare estimată</string>
     <string name="objective_details_label_objective_exec_name">Nume executant</string>
     <string name="objective_details_label_objective_type">Tipul obiectivului</string>
@@ -226,5 +226,9 @@
     <string name="objective_details_label_objective_meser_name">Nume meserias</string>
     <string name="objective_details_label_surname_meser">Prenume meserias</string>
     <string name="objective_details_label_nr_tel_meser">Telefon meserias</string>
+    
+    <!-- Petru -->
+     <string name="objective_btn_transfer">Transfera Obiectivele</string>
+     <string name="objective_btn_nottransfer">Inchide</string>
 
 </resources>

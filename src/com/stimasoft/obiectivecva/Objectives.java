@@ -87,10 +87,10 @@ public class Objectives extends AppCompatActivity
 	private HashMap<String, String> defaultOrderArgs;
 	private Pair<String, String> currentTableOrder;
 
-	//Add by Petru  
+	// Add by Petru
 	TextView headerName, benefName, constrName, addrName, cityName, phaseName, phaseExp;
-	//End by Petru 
-	
+	// End by Petru
+
 	private int mode;
 
 	int visibleItemCount;
@@ -238,6 +238,29 @@ public class Objectives extends AppCompatActivity
 			break;
 
 		case Constants.OBJECTIVES_ONGOING:
+
+			// Add Petru -Transfer Dialog Menu Bar
+
+			if (user.getUserType() == User.TYPE_DVA) {
+				MenuItem transfer = menu.add("Transfer");
+				transfer.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_archive_white_48dp));
+				transfer.setTitle("Transfer obiective");
+				transfer.setShowAsAction(MenuItem.SHOW_AS_ACTION_WITH_TEXT | MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+				transfer.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+					@Override
+					public boolean onMenuItemClick(MenuItem menuItem) {
+
+						TransferObiectiveDialog transfOb = new TransferObiectiveDialog(Objectives.this);
+						transfOb.show();
+
+						return true;
+					}
+				});
+
+			}
+			// End Petru
+
 			MenuItem archiveItem = menu.add("Arhiva");
 			archiveItem.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_archive_white_48dp));
 			archiveItem.setTitle("Arhiva");
@@ -479,8 +502,10 @@ public class Objectives extends AppCompatActivity
 		});
 
 		// **** Objective Name ****
-		// Modified By: Petru 
-		//in modul de afisare lista a obiectivelor se doreste sa se poata ordona afisarea (crescator/descrescator) dupa toate campurile afisate,
+		// Modified By: Petru
+		// in modul de afisare lista a obiectivelor se doreste sa se poata
+		// ordona afisarea (crescator/descrescator) dupa toate campurile
+		// afisate,
 
 		headerName.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
@@ -497,8 +522,7 @@ public class Objectives extends AppCompatActivity
 					UserData userData = new UserData(getApplicationContext());
 					userFilter = userData.generateCvaCodesString(userData.getUsersForDva(user.getCode()));
 				}
-				
-			
+
 				hideAll();
 
 				if (currentTableOrder.second.equals(FilterUtils.ASCENDING)) {
@@ -519,8 +543,8 @@ public class Objectives extends AppCompatActivity
 					((TextView) headerName).setCompoundDrawablesWithIntrinsicBounds(
 							ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_down_white_24dp), null, null, null);
 
-					//End by Petru 
-					
+					// End by Petru
+
 					defaultOrderArgs = order;
 
 				} else {
@@ -547,7 +571,6 @@ public class Objectives extends AppCompatActivity
 
 		});
 
-	
 		benefName.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -827,7 +850,6 @@ public class Objectives extends AppCompatActivity
 				}
 				hideAll();
 
-		
 				if (currentTableOrder.second.equals(FilterUtils.ASCENDING)) {
 					currentTableOrder = new Pair<String, String>(SQLiteHelper.NAME, FilterUtils.DESCENDING);
 
@@ -984,11 +1006,13 @@ public class Objectives extends AppCompatActivity
 
 	}
 
-	
-	//Add by Petru 
-	// Am pus toate campurile null si am folosit  	((TextView) View).setCompoundDrawablesWithIntrinsicBounds
-	//(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_arrow_drop_up_white_24dp), null, null, null); pentru a mi seta vizibila iconita ptr coloana selectata
-	
+	// Add by Petru
+	// Am pus toate campurile null si am folosit ((TextView)
+	// View).setCompoundDrawablesWithIntrinsicBounds
+	// (ContextCompat.getDrawable(getApplicationContext(),
+	// R.drawable.ic_arrow_drop_up_white_24dp), null, null, null); pentru a mi
+	// seta vizibila iconita ptr coloana selectata
+
 	private void hideAll() {
 		// TODO Auto-generated method stub
 		headerName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
@@ -1000,8 +1024,8 @@ public class Objectives extends AppCompatActivity
 		phaseExp.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
 	}
 
-	//End by Petru 
-	
+	// End by Petru
+
 	/**
 	 * Sets up the UI and filters for viewing of the archived objectives
 	 */
@@ -1011,8 +1035,6 @@ public class Objectives extends AppCompatActivity
 		this.setTitle(R.string.objective_title_archive);
 
 		final ObjectiveData objectiveData = new ObjectiveData(this);
-		
-	
 
 		currentTableOrder = new Pair<String, String>(SQLiteHelper.EXPIRATION_PHASE, FilterUtils.ASCENDING);
 
@@ -1173,7 +1195,7 @@ public class Objectives extends AppCompatActivity
 		});
 		// #returnhere
 
-		// Add arhive Petru 
+		// Add arhive Petru
 
 		headerName.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
@@ -1401,7 +1423,7 @@ public class Objectives extends AppCompatActivity
 					order.put(currentTableOrder.first, currentTableOrder.second);
 
 					Collections.sort(currentObjectives, new AdressComparatorDesc());
-					
+
 					objAdapter = new ObjectiveListAdapter(Objectives.this, currentObjectives, mode);
 
 					RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
@@ -1420,7 +1442,6 @@ public class Objectives extends AppCompatActivity
 
 					Collections.sort(currentObjectives, new AdressComparatorAsc());
 
-					
 					objAdapter = new ObjectiveListAdapter(Objectives.this, currentObjectives, mode);
 
 					RecyclerView objectivesList = (RecyclerView) findViewById(R.id.listView_consObjectives);
@@ -1657,8 +1678,9 @@ public class Objectives extends AppCompatActivity
 	public void onBackPressed() {
 		DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-		if (drawerLayout.isDrawerOpen(GravityCompat.START) || drawerLayout.isDrawerOpen(GravityCompat.END)) { 
-			// replace this with actual function which returns if the	 drawer is open
+		if (drawerLayout.isDrawerOpen(GravityCompat.START) || drawerLayout.isDrawerOpen(GravityCompat.END)) {
+			// replace this with actual function which returns if the drawer is
+			// open
 			drawerLayout.closeDrawers(); // replace this with actual function
 											// which closes drawer
 		} else if (user.getUserType() == User.TYPE_CVA && mode == Constants.OBJECTIVES_ONGOING) {

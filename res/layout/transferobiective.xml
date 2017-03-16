@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="740dp"
+    android:layout_gravity="center"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <!-- select filiala -->
+
+   
+        <LinearLayout
+            android:id="@+id/layout_filter_filiala"
+            android:layout_width="740dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/label_filter_filialaFrom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Din"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spinner_objective_filialaFrom"
+                android:layout_width="0dp"
+                android:layout_marginLeft="3dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5" 
+                android:layout_toRightOf="@+id/label_filter_filialaFrom" />
+            
+             <Spinner
+                android:id="@+id/spinner_objective_filialaFrom2"
+                android:visibility="invisible"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5" 
+                android:layout_toRightOf="@+id/label_filter_filialaFrom" />
+        </LinearLayout>
+
+            <!-- select agent -->
+        <LinearLayout
+            android:id="@+id/layout_filter_filiala2"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/label_filter_consilierTo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/objective_details_label_objective_consilier"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spinner_objective_consilierFrom"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/label_filter_consilierFrom"
+                android:layout_weight="0.5" />
+
+            <TextView
+                android:id="@+id/label_filter_filialaTo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Catre"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spinner_objective_consilierTo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/label_filter_consilierTo"
+                android:layout_weight="0.5" />
+        </LinearLayout>
+        
+    <!-- select message -->
+        <RelativeLayout
+            android:id="@+id/relmesage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/mesage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:visibility="invisible" />
+             <!-- end message -->
+        </RelativeLayout>
+   
+  <!-- Add btns -->
+    <LinearLayout
+        android:id="@+id/layout_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btnTransferaObiective"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_horizontal"
+            android:text="@string/objective_btn_transfer"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/txtEmp"
+            android:layout_width="25dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_horizontal"
+            android:text="@string/objective_btn_nottransfer"
+            android:textSize="17sp" />
+    </LinearLayout>
+  <!-- End btns -->
+</LinearLayout>

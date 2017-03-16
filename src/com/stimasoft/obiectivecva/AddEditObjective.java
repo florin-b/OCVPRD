@@ -36,6 +36,7 @@ import com.stimasoft.obiectivecva.listeners.EditDateClickListener;
 import com.stimasoft.obiectivecva.listeners.PhaseDurationChangeWatcher;
 import com.stimasoft.obiectivecva.models.db_classes.Beneficiary;
 import com.stimasoft.obiectivecva.models.db_classes.Objective;
+import com.stimasoft.obiectivecva.models.db_classes.ObjectiveLite;
 import com.stimasoft.obiectivecva.models.db_classes.Phase;
 import com.stimasoft.obiectivecva.models.db_classes.Region;
 import com.stimasoft.obiectivecva.models.db_classes.Stage;
@@ -59,6 +60,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.StringDef;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -85,8 +87,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AddEditObjective extends AppCompatActivity implements DatePickerDialogFragment.SetLimitsInterface,
-		PhaseDurationChangeWatcher.PhaseDurationChangedInterface {
+public class AddEditObjective extends AppCompatActivity
+		implements DatePickerDialogFragment.SetLimitsInterface, PhaseDurationChangeWatcher.PhaseDurationChangedInterface {
 
 	private int lastSelectedStageId = -1;
 	private int lastSelectedPhaseId = -1;
@@ -119,8 +121,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 	private EditDateClickListener phaseStartClickListener;
 	private EditDateClickListener phaseEndClickListener;
 
-	private EditText editText_objective_execName, editText_objective_execCUI, editText_objective_execNrRc,
-			editText_objective_address_phone;
+	private EditText editText_objective_execName, editText_objective_execCUI, editText_objective_execNrRc, editText_objective_address_phone;
 	private LinearLayout layout_executantDetailsName, layout_ExecutantDetailsCui, layout_executantDetailsNrRc;
 
 	// Alin
@@ -129,6 +130,8 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 	// sf. Alin
 
 	private boolean areGpsCoordsAutom = false;
+
+	ObjectiveLite objectLite;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +147,6 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		Setup setup = new Setup(this);
 		setup.setupToolbarBack(toolbar);
 
-		
 		setupMapFunctionality();
 		ObjectiveData objectiveData = new ObjectiveData(this);
 
@@ -154,27 +156,20 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		if (intent.getExtras() != null) {
 			mode = intent.getIntExtra(Constants.OBJECTIVES_MODE, -1);
 
-			if (intent.getExtras().containsKey(Constants.KEY_COORDINATES)
-					&& intent.getExtras().getString(Constants.KEY_PURPOSE).equals(Constants.VALUE_EDIT)) {
-				objectiveToEdit = objectiveData
-						.getObjectiveByCoords(intent.getExtras().getString(Constants.KEY_COORDINATES));
+			if (intent.getExtras().containsKey(Constants.KEY_COORDINATES) && intent.getExtras().getString(Constants.KEY_PURPOSE).equals(Constants.VALUE_EDIT)) {
+				objectiveToEdit = objectiveData.getObjectiveByCoords(intent.getExtras().getString(Constants.KEY_COORDINATES));
 				Log.d("DBG", "Intrat in modul de editare din harta");
 				purpose = EDIT;
 				setupEditUi(objectiveToEdit);
-			} else if (intent.getExtras().containsKey(Constants.KEY_ID)
-					&& intent.getExtras().getString(Constants.KEY_PURPOSE).equals(Constants.VALUE_EDIT)) {
-				objectiveToEdit = objectiveData.getObjectiveById(intent.getExtras().getInt(Constants.KEY_ID),
-						intent.getExtras().getString(Constants.CVA_CODE));
+			} else if (intent.getExtras().containsKey(Constants.KEY_ID) && intent.getExtras().getString(Constants.KEY_PURPOSE).equals(Constants.VALUE_EDIT)) {
+				objectiveToEdit = objectiveData.getObjectiveById(intent.getExtras().getInt(Constants.KEY_ID), intent.getExtras().getString(Constants.CVA_CODE));
 				Log.d("DBG", "Intrat in modul de editare din lista");
 				purpose = EDIT;
-				try{
-				setupEditUi(objectiveToEdit);
-				}
-				catch(Exception e)
-				{
-					for(int i=0; i<2; i++)
-					{
-					Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+				try {
+					setupEditUi(objectiveToEdit);
+				} catch (Exception e) {
+					for (int i = 0; i < 2; i++) {
+						Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
 					}
 				}
 			} else {
@@ -244,12 +239,13 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 			break;
 
 		case R.id.action_save:
-			//try {
+			// try {
 			saveNewObjective();
-					        
-			//} catch (Exception e) {
-				//Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
-			//}
+
+			// } catch (Exception e) {
+			// Toast.makeText(getApplicationContext(), e.toString(),
+			// Toast.LENGTH_LONG).show();
+			// }
 			break;
 
 		case R.id.action_saveModifications:
@@ -259,11 +255,11 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		case R.id.action_archive:
 			archiveObjective();
 			break;
-// **** Added Unrar Objective case, Author: Alin ****
+		// **** Added Unrar Objective case, Author: Alin ****
 		case R.id.action_unrar:
 			unrarObjective();
 			break;
-// End Add			
+		// End Add
 		case R.id.mapModHybrid:
 			map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 			break;
@@ -317,8 +313,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 				int inilen, endlen;
 				inilen = et.getText().length();
 
-				String v = s.toString().replace(String.valueOf(df.getDecimalFormatSymbols().getGroupingSeparator()),
-						"");
+				String v = s.toString().replace(String.valueOf(df.getDecimalFormatSymbols().getGroupingSeparator()), "");
 				Number n = df.parse(v);
 				int cp = et.getSelectionStart();
 				if (hasFractionalPart) {
@@ -363,6 +358,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 	 * @return A list containing: Objective instance, Phase duration, Phase
 	 *         start and end date
 	 */
+	@SuppressWarnings("deprecation")
 	private List<Object> createObjectiveFromForm() {
 		Objective objective;
 
@@ -448,20 +444,20 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		String telMeserias = editText_objective_meserTel.getText().toString().trim();
 		// End Meserias String
 
-		//Added error for incorrect completion of meserName, Author: Alin
+		// Added error for incorrect completion of meserName, Author: Alin
 		if (executantSpinner.getSelectedItem().toString().equals(EnumTipExecutant.TERT.getNume())
 				&& editText_objective_execName.getText().toString().trim().equals("")) {
 			editText_objective_execName.setError(getString(R.string.error_incorrect_completion));
 			thereAreErrors = true;
-		}/*
-		else if(executantSpinner.getSelectedItem().toString().equals(EnumTipExecutant.REGIE_PROPRIE.getNume())
-				&& editText_objective_meserName.getText().toString().trim().equals(""))
-		{
-			editText_objective_meserName.setError(getString(R.string.error_incorrect_completion));
-			thereAreErrors = true;
-		} */
-		//End Add
-		
+		} /*
+			 * else if(executantSpinner.getSelectedItem().toString().equals(
+			 * EnumTipExecutant.REGIE_PROPRIE.getNume()) &&
+			 * editText_objective_meserName.getText().toString().trim().equals(
+			 * "")) { editText_objective_meserName.setError(getString(R.string.
+			 * error_incorrect_completion)); thereAreErrors = true; }
+			 */
+		// End Add
+
 		// Handle name
 		String name = "";
 		if (nameText.getText().length() > 0) {
@@ -476,21 +472,20 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		 * inside the database Modified: 13.07.2016, Author: Alin
 		 */
 		float estimatedValue = 0;
-		
+
 		// Handle estimation value
 		if (estValueText.getText().length() > 0) {
 			estimatedValue = Float.parseFloat(estValueText.getText().toString().replace(",", "").replace("RON", ""));
-		} else {
-			estValueText.setError(getString(R.string.error_incorrect_completion));
-			thereAreErrors = true;
-		}
-		
+		} // else {
+			// estValueText.setError(getString(R.string.error_incorrect_completion));
+			// thereAreErrors = true;
+			// }
+
 		// Get date at time of creation
 		Calendar creationCalendar = new GregorianCalendar();
 		if (addDateText.getText().length() > 0)
 			try {
-				Date creationDate = sdf.parse(changeDateFormat(addDateText.getText().toString(),
-						Constants.USER_DATE_FORMAT, Constants.DB_DATE_FORMAT));
+				Date creationDate = sdf.parse(changeDateFormat(addDateText.getText().toString(), Constants.USER_DATE_FORMAT, Constants.DB_DATE_FORMAT));
 
 				creationCalendar.setTime(creationDate);
 
@@ -508,8 +503,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		Calendar authorizationCalendar = new GregorianCalendar();
 		if (authDateStart.getText().length() > 0) {
 			try {
-				Date authorizationDate = sdf.parse(changeDateFormat(authDateStart.getText().toString(),
-						Constants.USER_DATE_FORMAT, Constants.DB_DATE_FORMAT));
+				Date authorizationDate = sdf.parse(changeDateFormat(authDateStart.getText().toString(), Constants.USER_DATE_FORMAT, Constants.DB_DATE_FORMAT));
 
 				authorizationCalendar.setTime(authorizationDate);
 
@@ -517,19 +511,18 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 				e.printStackTrace();
 				thereAreErrors = true;
 			}
+			//Author Petru 
 		} else {
-			// TextView labelAuthDateStart = (TextView)
-			// findViewById(R.id.label_objective_authStartDate);
-			authDateStart.setError(getString(R.string.error_field_empty));
-			thereAreErrors = true;
+			authorizationCalendar.set(1970, 00, 01);
+
 		}
+		//End Petru 
 
 		// Handle authorization end date
 		Calendar authorizationEndCalendar = new GregorianCalendar();
 		if (authDateEnd.getText().length() > 0) {
 			try {
-				Date authorizationEndDate = sdf.parse(changeDateFormat(authDateEnd.getText().toString(),
-						Constants.USER_DATE_FORMAT, Constants.DB_DATE_FORMAT));
+				Date authorizationEndDate = sdf.parse(changeDateFormat(authDateEnd.getText().toString(), Constants.USER_DATE_FORMAT, Constants.DB_DATE_FORMAT));
 
 				authorizationEndCalendar.setTime(authorizationEndDate);
 
@@ -537,16 +530,35 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 				e.printStackTrace();
 				thereAreErrors = true;
 			}
+			//Author Petru  -just in case when field Data sfarsit is not mandatory set default date 
 		} else {
-			// TextView labelAuthDateEnd = (TextView)
-			// findViewById(R.id.label_objective_authEndDate);
-			authDateEnd.setError(getString(R.string.error_field_empty));
+			
+			authorizationEndCalendar.set(1970, 00, 01);
+			
+		}
+
+	
+		
+		int yearStart = authorizationCalendar.get(Calendar.YEAR);
+		int yearEnd = authorizationEndCalendar.get(Calendar.YEAR);
+
+		if ((yearStart == 1970) && (yearEnd == 1970)) {
+			
+			thereAreErrors = false;
+		} else if (yearStart == 1970) {
+			authDateStart.setError(getString(R.string.error_incorrect_completion));
 			thereAreErrors = true;
 		}
 
+		else if (yearEnd == 1970) {
+			authDateEnd.setError(getString(R.string.error_incorrect_completion));
+			thereAreErrors = true;
+		}
+
+		// end Petru
+
 		// Handle address
-		String address = generateAddressString(addressCity.getText().toString(), addressStreet.getText().toString(),
-				addressNumber.getText().toString());
+		String address = generateAddressString(addressCity.getText().toString(), addressStreet.getText().toString(), addressNumber.getText().toString());
 
 		// Handle stage
 		int stageId = ((Stage) stageSpinner.getSelectedItem()).getId();
@@ -558,8 +570,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		Calendar phaseStartCalendarEdited = new GregorianCalendar();
 		if (phaseStart.getText().length() > 0) {
 			try {
-				Date phaseStartDate = sdf.parse(changeDateFormat(phaseStart.getText().toString(),
-						Constants.USER_DATE_FORMAT, Constants.DB_DATE_FORMAT));
+				Date phaseStartDate = sdf.parse(changeDateFormat(phaseStart.getText().toString(), Constants.USER_DATE_FORMAT, Constants.DB_DATE_FORMAT));
 
 				phaseStartCalendarEdited.setTime(phaseStartDate);
 
@@ -579,8 +590,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		Calendar phaseEndCalendarEdited = new GregorianCalendar();
 		if (phaseEnd.getText().length() > 0) {
 			try {
-				Date phaseEndDate = sdf.parse(changeDateFormat(phaseEnd.getText().toString(),
-						Constants.USER_DATE_FORMAT, Constants.DB_DATE_FORMAT));
+				Date phaseEndDate = sdf.parse(changeDateFormat(phaseEnd.getText().toString(), Constants.USER_DATE_FORMAT, Constants.DB_DATE_FORMAT));
 
 				phaseEndCalendarEdited.setTime(phaseEndDate);
 
@@ -596,13 +606,12 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 		// Get duration in days
 		int days = Integer.parseInt(phaseDuration.getText().toString());
-		//Added error in case number is negative, Author: Alin
-		if(days < 0)
-		{
+		// Added error in case number is negative, Author: Alin
+		if (days < 0) {
 			phaseDuration.setError(getString(R.string.error_incorrect_completion));
 			thereAreErrors = true;
 		}
-		//End Add
+		// End Add
 
 		// Get coordinates
 		String coordinates = "";
@@ -612,14 +621,12 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		} else {
 
 			String myAddress = regionsSpinner.getSelectedItem().toString() + ","
-					+ generateAddressStringEmpty(addressCity.getText().toString(), addressStreet.getText().toString(),
-							addressNumber.getText().toString());
+					+ generateAddressStringEmpty(addressCity.getText().toString(), addressStreet.getText().toString(), addressNumber.getText().toString());
 
 			LatLng localCoords = getCoordinatesFromAddress(myAddress);
 
 			if (localCoords == null) {
-				Toast.makeText(getApplicationContext(), "Adresa incorecta, verificati datele.", Toast.LENGTH_LONG)
-						.show();
+				Toast.makeText(getApplicationContext(), "Adresa incorecta, verificati datele.", Toast.LENGTH_LONG).show();
 				return null;
 			} else
 				coordinates = String.valueOf(localCoords.latitude) + "," + String.valueOf(localCoords.longitude);
@@ -634,8 +641,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 		final int objectiveStatusId = EnumStadiuObiectiv.getCodStadiu(statusSpinner.getSelectedItem().toString());
 
-		final int objectivCategoryId = EnumCategorieObiectiv
-				.getCodeCategory(categorySpinner.getSelectedItem().toString());
+		final int objectivCategoryId = EnumCategorieObiectiv.getCodeCategory(categorySpinner.getSelectedItem().toString());
 
 		// Handle beneficiary adition.
 		HashMap<String, String> whereConditions = new HashMap<String, String>();
@@ -742,7 +748,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 				builder.setPositiveButton(getString(R.string.beneficiary_add_button_positive), dialogClickListener);
 				builder.setNegativeButton(getString(R.string.beneficiary_add_button_negative), dialogClickListener);
 				builder.show();
-			} //End else
+			} // End else
 		}
 		if (!thereAreErrors && !benefErrors[0]) {
 			List<Object> resultList = new ArrayList<Object>();
@@ -755,9 +761,8 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 			switch (purpose) {
 			case ADD:
 
-				objective = new Objective(objectiveType, cvaCode, regionId, name, creationCalendar, beneficiaryId[0],
-						beneficiaryType, authorizationCalendar, authorizationEndCalendar, estimatedValue, address, -1,
-						coordinates, stageId, phaseId, phaseEndCalendarEdited, 1);
+				objective = new Objective(objectiveType, cvaCode, regionId, name, creationCalendar, beneficiaryId[0], beneficiaryType, authorizationCalendar,
+						authorizationEndCalendar, estimatedValue, address, -1, coordinates, stageId, phaseId, phaseEndCalendarEdited, 1);
 
 				objective.setPhaseValues(sBuilder.toString());
 
@@ -773,7 +778,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 				objective.setPrenMeserias(prenMeserias);
 				objective.setTelMeserias(telMeserias);
 				// End Meserias fields
-
+				
 				objective.setTelBenef(telefonBeneficiar);
 
 				objective.setFiliala(UserInfo.getInstance().getUnitLog());
@@ -785,10 +790,8 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 				return resultList;
 
 			case EDIT:
-				objective = new Objective(objectiveToEdit.getId(), objectiveType, cvaCode, regionId, name,
-						creationCalendar, beneficiaryId[0], beneficiaryType, authorizationCalendar,
-						authorizationEndCalendar, estimatedValue, address, -1, coordinates, stageId, phaseId,
-						phaseEndCalendarEdited, 1);
+				objective = new Objective(objectiveToEdit.getId(), objectiveType, cvaCode, regionId, name, creationCalendar, beneficiaryId[0], beneficiaryType,
+						authorizationCalendar, authorizationEndCalendar, estimatedValue, address, -1, coordinates, stageId, phaseId, phaseEndCalendarEdited, 1);
 
 				objective.setPhaseValues(sBuilder.toString());
 
@@ -805,6 +808,8 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 				objective.setTelMeserias(telMeserias);
 				// End Meserias fields
 
+				
+				
 				objective.setTelBenef(telefonBeneficiar);
 
 				objective.setFiliala(UserInfo.getInstance().getUnitLog());
@@ -834,12 +839,11 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 		return phases;
 	}
-	
+
 	private void populateSpinnerExecutant(Spinner spinner, Objective objective) {
 		List<String> listExec = EnumTipExecutant.getTipExecNames();
 		String[] arrayExec = listExec.toArray(new String[listExec.size()]);
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
-				arrayExec);
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrayExec);
 		spinner.setAdapter(dataAdapter);
 
 		// Fixed a bug where the Executant will change, based on the Category Id
@@ -865,8 +869,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 	private void populateSpinnerCategory(Spinner spinner, Objective objective) {
 		List<String> listCategory = EnumCategorieObiectiv.getCategoriesNames();
 		String[] arrayCategory = listCategory.toArray(new String[listCategory.size()]);
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
-				arrayCategory);
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrayCategory);
 		spinner.setAdapter(dataAdapter);
 
 		if (null != objective) {
@@ -887,8 +890,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 	private void populateSpinnerStatus(Spinner spinner, Objective objective) {
 		List<String> listStatus = EnumStadiuObiectiv.getStatusNames();
 		String[] arrayStatus = listStatus.toArray(new String[listStatus.size()]);
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
-				arrayStatus);
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrayStatus);
 		spinner.setAdapter(dataAdapter);
 
 		if (null != objective) {
@@ -910,8 +912,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 		List<String> listRegions = EnumJudete.getRegionNames();
 		String[] arrayJud = listRegions.toArray(new String[listRegions.size()]);
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
-				arrayJud);
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrayJud);
 		spinner.setAdapter(dataAdapter);
 
 		if (null != objective) {
@@ -1100,8 +1101,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 			break;
 		}
 
-		final AutoCompleteTextView acTextViewBenef = (AutoCompleteTextView) findViewById(
-				R.id.acText_objective_beneficiary);
+		final AutoCompleteTextView acTextViewBenef = (AutoCompleteTextView) findViewById(R.id.acText_objective_beneficiary);
 		final TextView labelBenefTypeGrp = (TextView) findViewById(R.id.label_objective_beneficiaryType);
 
 		beneficiaryRadios.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -1144,8 +1144,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 					if (initialPosition > 0 && objectiveTypeRadioChecked) {
 						initialPosition++;
 					}
-					int newPosition = spsUtils.populateAvailableStagesSpinner(stageSpinner, -1, 0,
-							initialPosition).second;
+					int newPosition = spsUtils.populateAvailableStagesSpinner(stageSpinner, -1, 0, initialPosition).second;
 					stageSpinner.setSelection(newPosition);
 					objectiveTypeRadioChecked = true;
 					objectiveTypeChanged = true;
@@ -1156,8 +1155,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 					if (initialPosition >= 0 && objectiveTypeRadioChecked) {
 						initialPosition--;
 					}
-					int newPositionReno = spsUtils.populateAvailableStagesSpinner(stageSpinner, -1, 1,
-							initialPosition).second;
+					int newPositionReno = spsUtils.populateAvailableStagesSpinner(stageSpinner, -1, 1, initialPosition).second;
 					stageSpinner.setSelection(newPositionReno);
 					objectiveTypeRadioChecked = true;
 					objectiveTypeChanged = true;
@@ -1180,34 +1178,28 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		TextView textDataAddOb = (TextView) findViewById(R.id.textView_objective_addDate);
 		textDataAddOb.setText(Utils.getCurrentDate());
 
-		addDateClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD,
-				EditDateClickListener.TYPE_START, null, Calendar.getInstance(), R.id.textView_objective_addDate,
-				R.id.textView_objective_addDate);
+		addDateClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD, EditDateClickListener.TYPE_START, null,
+				Calendar.getInstance(), R.id.textView_objective_addDate, R.id.textView_objective_addDate);
 		addDate.setOnClickListener(addDateClickListener);
 
-		authDateSClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD,
-				EditDateClickListener.TYPE_START, null, Calendar.getInstance(), R.id.textView_objective_authStartDate,
-				R.id.textView_objective_authEndDate);
+		authDateSClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD, EditDateClickListener.TYPE_START, null,
+				Calendar.getInstance(), R.id.textView_objective_authStartDate, R.id.textView_objective_authEndDate);
 		authDateStart.setOnClickListener(authDateSClickListener);
 
-		authDateEClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD,
-				EditDateClickListener.TYPE_END, null, Calendar.getInstance(), R.id.textView_objective_authEndDate,
-				R.id.textView_objective_authStartDate);
+		authDateEClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD, EditDateClickListener.TYPE_END, null,
+				Calendar.getInstance(), R.id.textView_objective_authEndDate, R.id.textView_objective_authStartDate);
 		authDateEnd.setOnClickListener(authDateEClickListener);
 
-		phaseStartClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD,
-				EditDateClickListener.TYPE_START, null, Calendar.getInstance(), R.id.textView_objective_phaseStartDate,
-				R.id.textView_objective_phaseEndDate);
+		phaseStartClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD, EditDateClickListener.TYPE_START, null,
+				Calendar.getInstance(), R.id.textView_objective_phaseStartDate, R.id.textView_objective_phaseEndDate);
 		phaseStart.setOnClickListener(phaseStartClickListener);
 
-		phaseEndClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD,
-				EditDateClickListener.TYPE_END, null, Calendar.getInstance(), R.id.textView_objective_phaseEndDate,
-				R.id.textView_objective_phaseStartDate);
+		phaseEndClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD, EditDateClickListener.TYPE_END, null,
+				Calendar.getInstance(), R.id.textView_objective_phaseEndDate, R.id.textView_objective_phaseStartDate);
 		phaseEnd.setOnClickListener(phaseEndClickListener);
 
 		final EditText phaseDuration = (EditText) findViewById(R.id.editText_objective_phaseDuration);
-		phaseDuration.addTextChangedListener(
-				new PhaseDurationChangeWatcher(this, phaseEndClickListener, textViewPhaseStart, textViewPhaseEnd));
+		phaseDuration.addTextChangedListener(new PhaseDurationChangeWatcher(this, phaseEndClickListener, textViewPhaseStart, textViewPhaseEnd));
 
 		phaseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -1228,8 +1220,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 		ArrayAdapter<Pair<Integer, String>> autocompleteAdapter;
 
-		autocompleteAdapter = new AutoCompleteBenefAdapter(this, android.R.layout.simple_dropdown_item_1line,
-				new ArrayList<Pair<Integer, String>>());
+		autocompleteAdapter = new AutoCompleteBenefAdapter(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<Pair<Integer, String>>());
 
 		acTextViewBenef.setAdapter(autocompleteAdapter);
 
@@ -1271,8 +1262,8 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 				suggestions = benefData.getBeneficiaryAC(s.toString(), benefType);
 
-				AutoCompleteBenefAdapter adapter = new AutoCompleteBenefAdapter(AddEditObjective.this,
-						android.R.layout.simple_dropdown_item_1line, suggestions);
+				AutoCompleteBenefAdapter adapter = new AutoCompleteBenefAdapter(AddEditObjective.this, android.R.layout.simple_dropdown_item_1line,
+						suggestions);
 
 				acTextViewBenef.setAdapter(adapter);
 
@@ -1332,8 +1323,8 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 			@Override
 			public void onClick(View v) {
-				String addressString = generateAddressString(addressCity.getText().toString(),
-						addressStreet.getText().toString(), addressNumber.getText().toString());
+				String addressString = generateAddressString(addressCity.getText().toString(), addressStreet.getText().toString(),
+						addressNumber.getText().toString());
 
 				Setup setup = new Setup(AddEditObjective.this);
 				setup.hideKeyboard();
@@ -1354,9 +1345,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 				if (coordinates != null) {
 
 					if (coordinates.latitude == 0) {
-						Toast.makeText(getApplicationContext(),
-								"Coordonate eronate, repetati operatiunea dupa 30 de secunde.", Toast.LENGTH_LONG)
-								.show();
+						Toast.makeText(getApplicationContext(), "Coordonate eronate, repetati operatiunea dupa 30 de secunde.", Toast.LENGTH_LONG).show();
 						return;
 					}
 
@@ -1392,8 +1381,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 				populateGeoFields(latLng);
 
-				map.addMarker(new MarkerOptions().position(latLng)
-						.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+				map.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
 
 				CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, 21); // Zoom
 																						// to
@@ -1457,12 +1445,10 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		Beneficiary beneficiary = beneficiaryData.getBeneficiaryById(objective.getBeneficiaryId());
 
 		// Get the current phaseduration
-		int currentPhaseDuration = objectiveData.getCurrentObjectivePhaseDuration(objective.getId(),
-				objective.getPhaseId());
+		int currentPhaseDuration = objectiveData.getCurrentObjectivePhaseDuration(objective.getId(), objective.getPhaseId());
 
 		// Get the start and end date of the current phase
-		Pair<Calendar, Calendar> phaseInterval = objectiveData.getCurrentObjectivePhaseDetails(objective.getId(),
-				objective.getPhaseId());
+		Pair<Calendar, Calendar> phaseInterval = objectiveData.getCurrentObjectivePhaseDetails(objective.getId(), objective.getPhaseId());
 
 		Calendar phaseStartCalendar = phaseInterval.first;
 		Calendar phaseEndCalendar = phaseInterval.second;
@@ -1474,9 +1460,8 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		textViewAddedDate.setText(sdf.format(objective.getCreationDate().getTime()));
 
 		LinearLayout addDate = (LinearLayout) findViewById(R.id.layout_addDate);
-		addDateClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD,
-				EditDateClickListener.TYPE_START, null, objective.getCreationDate(), R.id.textView_objective_addDate,
-				-1);
+		addDateClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD, EditDateClickListener.TYPE_START, null,
+				objective.getCreationDate(), R.id.textView_objective_addDate, -1);
 
 		addDate.setOnClickListener(addDateClickListener);
 
@@ -1490,10 +1475,9 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		 * value Added: 13.07.2016, Author: Alin
 		 */
 		EditText editTextEstValue = (EditText) findViewById(R.id.editText_objective_estValue);
-		
+
 		String textformat = Float.toString(objective.getEstimationValue());
-		DecimalFormat formatter = new DecimalFormat("#,###.##" + " " + "RON",
-				DecimalFormatSymbols.getInstance(Locale.US));
+		DecimalFormat formatter = new DecimalFormat("#,###.##" + " " + "RON", DecimalFormatSymbols.getInstance(Locale.US));
 		Double amount = Double.parseDouble(textformat);
 		editTextEstValue.setText(formatter.format(amount));
 
@@ -1518,8 +1502,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		}
 
 		// Setup beneficiary name
-		final AutoCompleteTextView acvBeneficiaryName = (AutoCompleteTextView) findViewById(
-				R.id.acText_objective_beneficiary);
+		final AutoCompleteTextView acvBeneficiaryName = (AutoCompleteTextView) findViewById(R.id.acText_objective_beneficiary);
 		acvBeneficiaryName.setText(beneficiary.getName());
 
 		// Setup autocomplete name behaviour
@@ -1527,8 +1510,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 		ArrayAdapter<Pair<Integer, String>> autocompleteAdapter;
 
-		autocompleteAdapter = new AutoCompleteBenefAdapter(this, android.R.layout.simple_dropdown_item_1line,
-				new ArrayList<Pair<Integer, String>>());
+		autocompleteAdapter = new AutoCompleteBenefAdapter(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<Pair<Integer, String>>());
 
 		acvBeneficiaryName.setAdapter(autocompleteAdapter);
 
@@ -1570,8 +1552,8 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 				suggestions = benefData.getBeneficiaryAC(s.toString(), benefType);
 
-				AutoCompleteBenefAdapter adapter = new AutoCompleteBenefAdapter(AddEditObjective.this,
-						android.R.layout.simple_dropdown_item_1line, suggestions);
+				AutoCompleteBenefAdapter adapter = new AutoCompleteBenefAdapter(AddEditObjective.this, android.R.layout.simple_dropdown_item_1line,
+						suggestions);
 
 				acvBeneficiaryName.setAdapter(adapter);
 
@@ -1671,26 +1653,46 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		});
 
 		// Setup Authorization date start
+		
 		TextView textViewAuthorizationStart = (TextView) findViewById(R.id.textView_objective_authStartDate);
+		//Author Petru 
+		String data=textViewAuthorizationStart.getText().toString();
+		//End Petru 
 		textViewAuthorizationStart.setText(sdf.format(objective.getAuthorizationStart().getTime()));
+		
+		// Setup Authorization date end
+		TextView textViewAuthorizatioEnd = (TextView) findViewById(R.id.textView_objective_authEndDate);
+		//Author Petru
+		String dataEnd=textViewAuthorizatioEnd.getText().toString();
+		//End Petru 
+		textViewAuthorizatioEnd.setText(sdf.format(objective.getAuthorizationEnd().getTime()));
+			
+				// Author Petru -get default value and set Calendar with Current Date 
+		
+				if ( ((objective.getAuthorizationEnd().getTime().getYear()+1900)==1970)&&((objective.getAuthorizationStart().getTime().getYear()+1900)==1970) ){
+					textViewAuthorizatioEnd.setText(dataEnd);
+					textViewAuthorizationStart.setText(data);
+					objective.setAuthorizationStart(Calendar.getInstance());
+					objective.setAuthorizationEnd(Calendar.getInstance());
+				}
+				//End Petru 
+		
+	
+		
 
 		TextView authDateStart = (TextView) findViewById(R.id.textView_objective_authStartDate);
 
-		authDateSClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD,
-				EditDateClickListener.TYPE_START, objective.getAuthorizationEnd(), objective.getAuthorizationStart(),
-				R.id.textView_objective_authStartDate, R.id.textView_objective_authEndDate);
+		authDateSClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD, EditDateClickListener.TYPE_START,
+				objective.getAuthorizationEnd(), objective.getAuthorizationStart(), R.id.textView_objective_authStartDate, R.id.textView_objective_authEndDate);
 
 		authDateStart.setOnClickListener(authDateSClickListener);
 
-		// Setup Authorization date end
-		TextView textViewAuthorizatioEnd = (TextView) findViewById(R.id.textView_objective_authEndDate);
-		textViewAuthorizatioEnd.setText(sdf.format(objective.getAuthorizationEnd().getTime()));
-
+		
+		
 		TextView authDateEnd = (TextView) findViewById(R.id.textView_objective_authEndDate);
 
-		authDateEClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD,
-				EditDateClickListener.TYPE_END, objective.getAuthorizationStart(), objective.getAuthorizationEnd(),
-				R.id.textView_objective_authEndDate, R.id.textView_objective_authStartDate);
+		authDateEClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD, EditDateClickListener.TYPE_END,
+				objective.getAuthorizationStart(), objective.getAuthorizationEnd(), R.id.textView_objective_authEndDate, R.id.textView_objective_authStartDate);
 		authDateEnd.setOnClickListener(authDateEClickListener);
 
 		// Setup address
@@ -1709,8 +1711,8 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 			@Override
 			public void onClick(View v) {
-				String addressString = generateAddressString(addressCity.getText().toString(),
-						addressStreet.getText().toString(), addressNumber.getText().toString());
+				String addressString = generateAddressString(addressCity.getText().toString(), addressStreet.getText().toString(),
+						addressNumber.getText().toString());
 
 				Setup setup = new Setup(AddEditObjective.this);
 				setup.hideKeyboard();
@@ -1730,9 +1732,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 				if (coordinates != null) {
 
 					if (coordinates.latitude == 0) {
-						Toast.makeText(getApplicationContext(),
-								"Coordonate eronate, repetati operatiunea dupa 30 de secunde.", Toast.LENGTH_LONG)
-								.show();
+						Toast.makeText(getApplicationContext(), "Coordonate eronate, repetati operatiunea dupa 30 de secunde.", Toast.LENGTH_LONG).show();
 						return;
 					}
 
@@ -1765,7 +1765,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		editText_objective_meserSurname = (EditText) findViewById(R.id.editText_objective_meserSurname);
 		editText_objective_meserTel = (EditText) findViewById(R.id.editText_objective_meserTel);
 		// Meserias Fields Alin
-		
+
 		editText_objective_address_phone = (EditText) findViewById(R.id.editText_objective_address_phone);
 		editText_objective_address_phone.setText(objective.getTelBenef().trim());
 
@@ -1781,8 +1781,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 			limit = 1;
 		}
 
-		spsUtils.populateAvailableStagesSpinner(stageSpinner, objectiveId, limit,
-				stageSpinner.getSelectedItemPosition());
+		spsUtils.populateAvailableStagesSpinner(stageSpinner, objectiveId, limit, stageSpinner.getSelectedItemPosition());
 
 		for (int i = 0; i < stageSpinner.getCount(); i++) { // Find current
 															// stage in spinner
@@ -1819,8 +1818,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 					int selectedStageHierarchy = ((Stage) adapterView.getSelectedItem()).getHierarchy();
 					if (selectedStageHierarchy > ++lastSelectedStageHierarchy && !objectiveTypeChanged) {
 						Log.d("DBG", "firing stage alert dialog");
-						AlertDialog.Builder builder = new AlertDialog.Builder(AddEditObjective.this,
-								R.style.AlertDialog);
+						AlertDialog.Builder builder = new AlertDialog.Builder(AddEditObjective.this, R.style.AlertDialog);
 						builder.setTitle(getString(R.string.stage_phase_warning_title));
 						builder.setMessage(getString(R.string.stage_warning_text));
 						builder.setPositiveButton(getString(R.string.stage_phase_warning_button_positive), null);
@@ -1838,7 +1836,6 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 			}
 		});
 
-		
 		// Setup Phase spinner
 		spsUtils.populateAvailablePhasesSpinner(phaseSpinner, objectiveId, objective.getStageId());
 
@@ -1867,18 +1864,17 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 					int selectedPhaseHierarchy = ((Phase) adapterView.getSelectedItem()).getHierarchy();
 					if (selectedPhaseHierarchy > ++lastSelectedPhaseHierarchy && !objectiveStageChanged) {
 						Log.d("DBG", "firing phase alert dialog");
-						AlertDialog.Builder builder = new AlertDialog.Builder(AddEditObjective.this,
-								R.style.AlertDialog);
+						AlertDialog.Builder builder = new AlertDialog.Builder(AddEditObjective.this, R.style.AlertDialog);
 						builder.setTitle(getString(R.string.stage_phase_warning_title));
 						builder.setMessage(getString(R.string.phase_warning_text));
 						builder.setPositiveButton(getString(R.string.stage_phase_warning_button_positive), null);
 						builder.show();
 					}
-				
+
 					lastSelectedPhaseHierarchy = ((Phase) adapterView.getSelectedItem()).getHierarchy();
 					objectiveStageChanged = false;
-				}		
-				
+				}
+
 			}
 
 			@Override
@@ -1886,7 +1882,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 			}
 		});
-		
+
 		final TextView labelObjTpeGrp = (TextView) findViewById(R.id.label_objective_type);
 
 		grpObjType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -1899,8 +1895,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 					if (initialPosition > 0 && objectiveTypeRadioChecked) {
 						initialPosition++;
 					}
-					int newPosition = spsUtils.populateAvailableStagesSpinner(stageSpinner, -1, 0,
-							initialPosition).second;
+					int newPosition = spsUtils.populateAvailableStagesSpinner(stageSpinner, -1, 0, initialPosition).second;
 					stageSpinner.setSelection(newPosition);
 					objectiveTypeRadioChecked = true;
 					objectiveTypeChanged = true;
@@ -1911,8 +1906,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 					if (initialPosition >= 0 && objectiveTypeRadioChecked) {
 						initialPosition--;
 					}
-					int newPositionReno = spsUtils.populateAvailableStagesSpinner(stageSpinner, -1, 1,
-							initialPosition).second;
+					int newPositionReno = spsUtils.populateAvailableStagesSpinner(stageSpinner, -1, 1, initialPosition).second;
 					stageSpinner.setSelection(newPositionReno);
 					objectiveTypeRadioChecked = true;
 					objectiveTypeChanged = true;
@@ -1929,29 +1923,24 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		textViewPhaseStart.setText(sdf.format(phaseStartCalendar.getTime()));
 
 		LinearLayout phaseStart = (LinearLayout) findViewById(R.id.layout_phaseStartDate);
-		phaseStartClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD,
-				EditDateClickListener.TYPE_START, phaseEndCalendar, phaseStartCalendar,
-				R.id.textView_objective_phaseStartDate, R.id.textView_objective_phaseEndDate);
+		phaseStartClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD, EditDateClickListener.TYPE_START,
+				phaseEndCalendar, phaseStartCalendar, R.id.textView_objective_phaseStartDate, R.id.textView_objective_phaseEndDate);
 		phaseStart.setOnClickListener(phaseStartClickListener);
 
 		// Setup phase end field
 		TextView textViewPhaseEnd = (TextView) findViewById(R.id.textView_objective_phaseEndDate);
-		textViewPhaseEnd.setText(sdf.format(phaseEndCalendar.getTime()));		
-		
+		textViewPhaseEnd.setText(sdf.format(phaseEndCalendar.getTime()));
+
 		LinearLayout phaseEnd = (LinearLayout) findViewById(R.id.layout_phaseEndDate);
-		phaseEndClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD,
-				EditDateClickListener.TYPE_END, phaseStartCalendar, phaseEndCalendar,
-				R.id.textView_objective_phaseEndDate, R.id.textView_objective_phaseStartDate);
+		phaseEndClickListener = new EditDateClickListener(AddEditObjective.this, EditDateClickListener.PURPOSE_ADD, EditDateClickListener.TYPE_END,
+				phaseStartCalendar, phaseEndCalendar, R.id.textView_objective_phaseEndDate, R.id.textView_objective_phaseStartDate);
 		phaseEnd.setOnClickListener(phaseEndClickListener);
-		
-		
-		// Setup phase duration 
+
+		// Setup phase duration
 		EditText editTextPhaseDuration = (EditText) findViewById(R.id.editText_objective_phaseDuration);
 		editTextPhaseDuration.setText(Integer.toString(currentPhaseDuration));
-	
 
-		editTextPhaseDuration.addTextChangedListener(
-				new PhaseDurationChangeWatcher(this, phaseEndClickListener, textViewPhaseStart, textViewPhaseEnd));
+		editTextPhaseDuration.addTextChangedListener(new PhaseDurationChangeWatcher(this, phaseEndClickListener, textViewPhaseStart, textViewPhaseEnd));
 
 		if (user.getUserType() == User.TYPE_DVA || mode == Constants.OBJECTIVES_ARCHIVE) {
 			RadioButton radioNewConstruction = (RadioButton) findViewById(R.id.radio_newConstruction);
@@ -2000,21 +1989,20 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 			views.add(editText_objective_execName);
 			views.add(editText_objective_execCUI);
 			views.add(editText_objective_execNrRc);
-			
+
 			// Meserias views Alin
 			views.add(editText_objective_meserName);
 			views.add(editText_objective_meserSurname);
 			views.add(editText_objective_meserTel);
 			// End Meserias views Alin
-			
-			views.add(editText_objective_address_phone);
 
+			views.add(editText_objective_address_phone);
 
 			disableUi(views);
 
 			map.setOnMapLongClickListener(null);
 		}
-		
+
 		// Put a marker where the objective is
 		// String[] latlong = objective.getGps().split(",");
 		double latitude = Double.parseDouble(latlong[0]);
@@ -2022,8 +2010,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 		LatLng latLng = new LatLng(latitude, longitude);
 
-		map.addMarker(new MarkerOptions().position(latLng)
-				.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+		map.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
 
 		CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latLng, 21); // Zoom
 																				// to
@@ -2041,6 +2028,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		setup.hideKeyboard();
 
 		List<Object> savedObjectiveData = createObjectiveFromForm();
+
 		ObjectiveData objectiveData = new ObjectiveData(getApplicationContext());
 
 		if (savedObjectiveData != null) {
@@ -2125,41 +2113,37 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		Log.d("DBG", "Am salvat obiectivul");
 	}
 
-	/** 8. se doreste crearea scoaterii din arhiva a unui obiectiv dus din greseala acolo
-	 * Convenience method to unrar an objective
-	 * Author: Alin;
+	/**
+	 * 8. se doreste crearea scoaterii din arhiva a unui obiectiv dus din
+	 * greseala acolo Convenience method to unrar an objective Author: Alin;
 	 */
-	
-	private void unrarObjective()
-	{
+
+	private void unrarObjective() {
 		Setup setup = new Setup(AddEditObjective.this);
 		setup.hideKeyboard();
-		
+
 		ObjectiveData objectiveData = new ObjectiveData(this);
 		savedObjective = createObjectiveFromForm();
-		if(savedObjective != null)
-		{
+		if (savedObjective != null) {
 			objectiveData.editAndUnrar(savedObjective);
 			Objective tempObjective = null;
-			
-			for(Object obj : savedObjective)
-			{
-				if(obj instanceof Objective)
-				{
+
+			for (Object obj : savedObjective) {
+				if (obj instanceof Objective) {
 					tempObjective = (Objective) obj;
 				}
 			}
-			
+
 			Intent i = getIntent();
 			i.putExtra(Constants.KEY_COORDINATES, tempObjective.getGps());
 			setResult(RESULT_OK, i);
 			finish();
-			
+
 			sendLocalDataToServer();
 		}
 		Log.d("DGB", "Am dezarhivat obiectivul");
 	}
-	
+
 	/**
 	 * Disables all the provided views in order to prevent editing
 	 *
@@ -2187,10 +2171,8 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 	}
 
-
 	@Override
-	public void onDateSelected(Calendar limit, int modifierPurpose, int modifierType, int changeTarget,
-			int limitTarget) {
+	public void onDateSelected(Calendar limit, int modifierPurpose, int modifierType, int changeTarget, int limitTarget) {
 
 		// Change the date in the targeted date field
 		SimpleDateFormat sdf = new SimpleDateFormat(Constants.USER_DATE_FORMAT);
@@ -2198,7 +2180,6 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		EditText days = (EditText) findViewById(R.id.editText_objective_phaseDuration);
 		int daysInt = Integer.parseInt(days.getText().toString());
 		dateToChange.setText(sdf.format(limit.getTime()));
-		
 
 		// Update date limits based on limitTarget
 		switch (limitTarget) {
@@ -2220,7 +2201,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		case R.id.textView_objective_phaseStartDate:
 			phaseEndClickListener.setDefaultDate(limit);
 			TextView labelPhaseEnd = (TextView) findViewById(R.id.label_objective_phaseEndDate);
-			//phaseEnd, Author: Alin;
+			// phaseEnd, Author: Alin;
 			try {
 				onPhaseEndChanged(limit, true);
 			} catch (ParseException e) {
@@ -2234,7 +2215,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		case R.id.textView_objective_phaseEndDate:
 			phaseStartClickListener.setDefaultDate(limit);
 			TextView labelPhaseStart = (TextView) findViewById(R.id.label_objective_phaseStartDate);
-			//phaseStart, Author: Alin;
+			// phaseStart, Author: Alin;
 			try {
 				onPhaseEndChanged(limit, true);
 			} catch (ParseException e) {
@@ -2243,7 +2224,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 			}
 			labelPhaseStart.setError(null);
 			limit.add(Calendar.DAY_OF_MONTH, daysInt);
-			phaseEndClickListener.setLimit(limit);			
+			phaseEndClickListener.setLimit(limit);
 			break;
 
 		case R.id.textView_objective_addDate:
@@ -2265,38 +2246,36 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 			phaseEndClickListener.setDefaultDate(newLimit);
 
 			TextView phaseEndText = (TextView) findViewById(R.id.textView_objective_phaseEndDate);
-			SimpleDateFormat sdf = new SimpleDateFormat(Constants.USER_DATE_FORMAT);			
+			SimpleDateFormat sdf = new SimpleDateFormat(Constants.USER_DATE_FORMAT);
 
 			phaseEndText.setText(sdf.format(newLimit.getTime()));
-			
+
 		}
 	}
-	
-/* Added onPhaseEndChanged method that changes the phaseDuration
- *  when phaseStart and phaseEnd are modified
- *  Author: Alin; 
- *  */
-	public void onPhaseEndChanged(Calendar newLimit, boolean changeDate) throws ParseException
-	{
+
+	/*
+	 * Added onPhaseEndChanged method that changes the phaseDuration when
+	 * phaseStart and phaseEnd are modified Author: Alin;
+	 */
+	public void onPhaseEndChanged(Calendar newLimit, boolean changeDate) throws ParseException {
 		phaseEndClickListener.setLimit(newLimit);
-		EditText phaseDuration = (EditText) findViewById(R.id.editText_objective_phaseDuration);		
-		if(changeDate)
-		{
-			
+		EditText phaseDuration = (EditText) findViewById(R.id.editText_objective_phaseDuration);
+		if (changeDate) {
+
 			TextView phaseStartText = (TextView) findViewById(R.id.textView_objective_phaseStartDate);
 			TextView phaseEndText = (TextView) findViewById(R.id.textView_objective_phaseEndDate);
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-			
+
 			Date startDate = sdf.parse(phaseStartText.getText().toString());
 			Date endDate = sdf.parse(phaseEndText.getText().toString());
-			
+
 			long diff = endDate.getTime() - startDate.getTime();
-			int calculatedDays = (int)TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-			
+			int calculatedDays = (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+
 			phaseDuration.setText(Integer.toString(calculatedDays));
-		}	
+		}
 	}
-//End add
+	// End add
 
 	private class StageSpinnerAdapter extends ArrayAdapter<Stage> {
 
@@ -2307,8 +2286,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		@Override
 		public View getView(int pos, View convertView, ViewGroup parent) {
 			if (convertView == null) {
-				convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.spinner_dropdown_item, parent,
-						false);
+				convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.spinner_dropdown_item, parent, false);
 			}
 
 			TextView nameText = (TextView) convertView.findViewById(R.id.spinner_text);
@@ -2339,8 +2317,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 		@Override
 		public View getView(int pos, View convertView, ViewGroup parent) {
 			if (convertView == null) {
-				convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.spinner_dropdown_item, parent,
-						false);
+				convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.spinner_dropdown_item, parent, false);
 			}
 
 			TextView nameText = (TextView) convertView.findViewById(R.id.spinner_text);
@@ -2381,8 +2358,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 	/**
 	 * Setup method for defining the behavior of the map fragment
 	 */
-	
-	
+
 	private void setupMapFunctionality() {
 		// SET UP Google Map
 
@@ -2440,13 +2416,10 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 								map.addMarker(new MarkerOptions().position(newMarkerPosition) // create
 																								// new
 																								// marker
-										.title("Obiectiv Nou").icon(BitmapDescriptorFactory
-												.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+										.title("Obiectiv Nou").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
 
-								EditText coordinatesLat = (EditText) findViewById(
-										R.id.editText_objective_coordinates_lat);
-								EditText coordinatesLon = (EditText) findViewById(
-										R.id.editText_objective_coordinates_lon);
+								EditText coordinatesLat = (EditText) findViewById(R.id.editText_objective_coordinates_lat);
+								EditText coordinatesLon = (EditText) findViewById(R.id.editText_objective_coordinates_lon);
 								coordinatesLat.setText(Double.toString(newMarkerPosition.latitude));
 								coordinatesLon.setText(Double.toString(newMarkerPosition.longitude));
 
@@ -2454,10 +2427,8 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 								coordinatesLon.setError(null);
 
 								EditText addressCity = (EditText) findViewById(R.id.editText_objective_address_city);
-								EditText addressStreet = (EditText) findViewById(
-										R.id.editText_objective_address_street);
-								EditText addressNumber = (EditText) findViewById(
-										R.id.editText_objective_address_number);
+								EditText addressStreet = (EditText) findViewById(R.id.editText_objective_address_street);
+								EditText addressNumber = (EditText) findViewById(R.id.editText_objective_address_number);
 
 								populateGeoFields(newMarkerPosition);
 
@@ -2573,8 +2544,8 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 				if (computedCoordinates != null) {
 					map.clear();
-					map.addMarker(new MarkerOptions().position(computedCoordinates)
-							.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+					map.addMarker(
+							new MarkerOptions().position(computedCoordinates).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
 
 					CameraUpdate update = CameraUpdateFactory.newLatLngZoom(computedCoordinates, 21); // Zoom
 																										// to
@@ -2590,8 +2561,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 					coordinatesLon.setError(null);
 
 				} else {
-					Toast.makeText(getApplicationContext(), "Nu au putut fi gasite coordinate pentru aceasta adresa",
-							Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(), "Nu au putut fi gasite coordinate pentru aceasta adresa", Toast.LENGTH_LONG).show();
 				}
 
 				ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar_computeCoordinates);
@@ -2677,27 +2647,22 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 
 				if (address != null) {
 
-					String[] region = com.arabesque.obiectivecva.Utils.flattenToAscii(address.getAdminArea())
-							.split(" ");
+					String[] region = com.arabesque.obiectivecva.Utils.flattenToAscii(address.getAdminArea()).split(" ");
 
 					for (int i = 0; i < regionsSpinner.getCount(); i++) {
-						if (regionsSpinner.getItemAtPosition(i).toString().toLowerCase(Locale.US)
-								.contains(region[region.length - 1].toLowerCase())) {
+						if (regionsSpinner.getItemAtPosition(i).toString().toLowerCase(Locale.US).contains(region[region.length - 1].toLowerCase())) {
 							regionsSpinner.setSelection(i);
 							break;
 
 						}
 					}
 
-					addressCity
-							.setText(address.getLocality() != null ? Utils.flattenToAscii(address.getLocality()) : "");
-					addressStreet.setText(
-							address.getThoroughfare() != null ? Utils.flattenToAscii(address.getThoroughfare()) : "");
+					addressCity.setText(address.getLocality() != null ? Utils.flattenToAscii(address.getLocality()) : "");
+					addressStreet.setText(address.getThoroughfare() != null ? Utils.flattenToAscii(address.getThoroughfare()) : "");
 					addressNumber.setText(address.getSubThoroughfare() != null ? address.getSubThoroughfare() : "");
 
 				} else {
-					Toast.makeText(getApplicationContext(), "Nu a putut fi gasita o adresa pentru aceste coordonate",
-							Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(), "Nu a putut fi gasita o adresa pentru aceste coordonate", Toast.LENGTH_LONG).show();
 
 					addressCity.setText("");
 					addressStreet.setText("");
@@ -2826,8 +2791,7 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 			map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
 			map.clear();
-			map.addMarker(new MarkerOptions().position(currentPosition)
-					.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+			map.addMarker(new MarkerOptions().position(currentPosition).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
 
 			CameraUpdate update = CameraUpdateFactory.newLatLngZoom(currentPosition, MapActivity.ZOOM_PLACE);
 			map.animateCamera(update);
@@ -2842,20 +2806,9 @@ public class AddEditObjective extends AppCompatActivity implements DatePickerDia
 	}
 }
 
-
-//Resourcefull code
+// Resourcefull code
 /*
- 		try
-		{
-		}
-		catch(Exception e)
-		{
-			for(int i = 0; i<4; i++)
-			{
-				Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
-			}
-		}
+ * try { } catch(Exception e) { for(int i = 0; i<4; i++) {
+ * Toast.makeText(getApplicationContext(), e.toString(),
+ * Toast.LENGTH_LONG).show(); } }
  */
-
-
-

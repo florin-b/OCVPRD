@@ -41,7 +41,7 @@ public class ObjectiveData {
 	private SQLiteHelper dbHelper;
 	private Context context;
 
-	private static final int QUERY_LIMIT = 400;
+	private static final int QUERY_LIMIT = 1000;
 	private Phase phase;
 
 	public ObjectiveData(Context cntxt) {
